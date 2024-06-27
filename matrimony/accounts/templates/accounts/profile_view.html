@@ -1,0 +1,45 @@
+{% extends 'accounts/shared/accounts_base.html' %}
+
+{% block accounts_content %}
+    <h1 class="text-center">Your Profile</h1>
+    <div class="card my-4">
+        <table class="table">
+            <tr>
+                <th>First Name</th>
+                <td>{{ data.first_name }}</td>
+            </tr>
+            <tr>
+                <th>Last Name</th>
+                <td>{{ data.last_name }}</td>
+            </tr>
+            <tr>
+                <th>Username</th>
+                <td>{{ data.username }}</td>
+            </tr>
+            <tr>
+                <th>Email</th>
+                <td>{{ data.email }}</td>
+            </tr>
+            <tr>
+                <th>Phone Number</th>
+                <td>{{ data.phone_number }}</td>
+            </tr>
+            <tr>
+                <th>Date of Birth</th>
+                <td>{{ data.date_of_birth }}</td>
+            </tr>
+            <tr>
+                <th>Gender</th>
+                <td>{{ data.gender }}</td>
+            </tr>
+            <tr>
+                <th>Country</th>
+                <td>{{ data.country }}</td>
+            </tr>
+        </table>
+        <div class="card-footer">
+            <a href="{% url 'accounts:change_password' %}" class="btn btn-primary">Change Password</a>
+            <a href="{% url 'accounts:profile_edit' %}" class="btn btn-primary">Edit Profile</a>
+        </div>
+    </div>
+{% endblock accounts_content %}

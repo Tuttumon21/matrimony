@@ -1,0 +1,17 @@
+{% extends 'shared/base.html' %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="col-sm-4 offset-sm-4 mt-5">
+        <h1 class="text-center">Login</h1>
+        <form method="post">
+            {% include 'components/form_field.html' with field=form.email %}
+            {% include 'components/form_field.html' with field=form.password %}
+            <div class="d-grid">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-primary mt-2">Login</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock content %}
