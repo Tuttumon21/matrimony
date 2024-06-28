@@ -1,4 +1,4 @@
-from django.forms import Form, ModelForm, CharField, TextInput, EmailField, PasswordInput, EmailInput
+from django.forms import Form, ModelForm, CharField, TextInput, EmailField, PasswordInput, EmailInput,NumberInput, Select,DateInput
 from .models import User
 
 
@@ -42,12 +42,18 @@ class RegistrationForm(ModelForm):
             'last_name',
             'username',
             'email',
+            'phone_number',
+            'date_of_birth',
+            'gender',
             'password',
             
         ]
         widgets =  {
             'first_name': TextInput(attrs={'class': 'form-control'}),
             'last_name': TextInput(attrs={'class': 'form-control'}),
+            'phone_number': NumberInput(attrs={'class': 'form-control'}),
+            'date_of_birth': DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'gender': Select(attrs={'class': 'form-control'}),
             'email': EmailInput(attrs={'class': 'form-control'}),
             'password': PasswordInput(attrs={'class': 'form-control'}),
             'username': TextInput(attrs={'class': 'form-control'}),

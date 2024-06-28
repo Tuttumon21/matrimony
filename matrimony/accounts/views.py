@@ -45,7 +45,7 @@ def user_registration(request):
         return render(request, 'accounts/register.html', context)
 
     elif request.method == 'POST':
-        form = LoginForm(data=request.POST)
+        form = RegistrationForm(data=request.POST)
         context['form'] = form
 
         if not form.is_valid():
@@ -53,6 +53,7 @@ def user_registration(request):
 
         try:
             user = form.save(commit=False)
+            user.set_password(user.password)
             user.save()
             login(request, user)
             return redirect('/')
