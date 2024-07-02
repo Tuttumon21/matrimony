@@ -1,5 +1,6 @@
-from django.forms import Form, ModelForm, CharField, TextInput, EmailField, PasswordInput, EmailInput,NumberInput, Select,DateInput
+from django.forms import Form, ModelForm, CharField, TextInput, EmailField, PasswordInput, EmailInput,NumberInput, Select,DateInput,FileInput
 from .models import User
+from django import forms
 
 
 class LoginForm(Form):
@@ -38,28 +39,43 @@ class RegistrationForm(ModelForm):
     class Meta:
         model = User
         fields = [
-            'first_name',
-            'last_name',
             'username',
             'email',
-            'phone_number',
-            'date_of_birth',
-            'gender',
             'password',
             
         ]
         widgets =  {
-            'first_name': TextInput(attrs={'class': 'form-control'}),
-            'last_name': TextInput(attrs={'class': 'form-control'}),
-            'phone_number': NumberInput(attrs={'class': 'form-control'}),
-            'date_of_birth': DateInput(attrs={'class': 'form-control', 'type': 'date'}),
-            'gender': Select(attrs={'class': 'form-control'}),
+            
+            'username': TextInput(attrs={'class': 'form-control'}),
             'email': EmailInput(attrs={'class': 'form-control'}),
             'password': PasswordInput(attrs={'class': 'form-control'}),
-            'username': TextInput(attrs={'class': 'form-control'}),
 
         }
 
 class ProfileUpdateForm(RegistrationForm):
     password = None
     confirm_password = None
+
+class BasicInfoForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = [
+            'first_name',
+            'last_name',
+            'gender',
+            'age',
+            'phone_number',
+            'date_of_birth',
+            'education_level',
+            'profile_pic',
+        ]
+        widgets = {
+            'first_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'gender': forms.Select(attrs={'class': 'form-control'}),
+            'age': forms.TextInput(attrs={'class': 'form-control', 'readonly': 'readonly', 'placeholder': 'Age will Automatically calculate'}),
+            'phone_number': forms.TextInput(attrs={'class': 'form-control'}),
+            'date_of_birth': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'education_level': forms.Select(attrs={'class': 'form-control'}),
+            'profile_pic': forms.FileInput(attrs={'class': 'form-control'}),
+        }

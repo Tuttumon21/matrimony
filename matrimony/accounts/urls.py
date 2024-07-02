@@ -1,5 +1,7 @@
 from django.urls import path
 from .views import *
+from . import views
+
 
 app_name = 'accounts'
 urlpatterns = [
@@ -9,5 +11,8 @@ urlpatterns = [
     path('profile/', ProfileView.as_view(), name='profile'),
     path('profile/edit/', ProfileUpdateView.as_view(), name='profile_edit'),
     path('change-password/', ChangePasswordView.as_view(), name='change_password'),
+
+
+    path('basic_info/', basic_info_view, name='basic_info'),
     
 ]

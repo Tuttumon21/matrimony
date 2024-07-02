@@ -1,0 +1,48 @@
+<!-- basic_info.html -->
+{% extends 'shared/base.html' %}
+
+{% block content %}
+<div class="row">
+  <div class="col-sm-8 offset-sm-2 mt-5 shadow p-4">
+    <h1 class="text-center">Update Basic Information</h1>
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="row">
+        <div class="col">
+          {% include 'components/form_field.html' with field=form.first_name %}
+        </div>
+        <div class="col">
+          {% include 'components/form_field.html' with field=form.last_name %}
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          {% include 'components/form_field.html' with field=form.gender %}
+        </div>
+        <div class="col">
+          {% include 'components/form_field.html' with field=form.age %}
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          {% include 'components/form_field.html' with field=form.date_of_birth %}
+        </div>
+        <div class="col">
+          {% include 'components/form_field.html' with field=form.phone_number %}
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          {% include 'components/form_field.html' with field=form.education_level %}
+        </div>
+        <div class="col">
+          {% include 'components/form_field.html' with field=form.profile_pic %}
+        </div>
+      </div>
+      <div class="d-grid">
+        <button type="submit" class="btn btn-success my-3">Save</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

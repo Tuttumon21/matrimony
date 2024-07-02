@@ -1,5 +1,5 @@
-from django.shortcuts import render, redirect
-from.forms import LoginForm, RegistrationForm, ProfileUpdateForm
+from django.shortcuts import render, redirect,reverse
+from.forms import LoginForm, RegistrationForm, ProfileUpdateForm, BasicInfoForm
 from django.contrib.auth import authenticate, login, logout
 from .models import User
 from django.forms.forms import BaseForm
@@ -56,7 +56,8 @@ def user_registration(request):
             user.set_password(user.password)
             user.save()
             login(request, user)
-            return redirect('/')
+            # return redirect(reverse('accounts:basic_info'))
+            return redirect('basic_info')
 
         except:
             return render(request, 'accounts/register.html', context)
@@ -80,8 +81,10 @@ class ProfileUpdateView(LoginRequiredMixin, FormView):
     template_name = 'accounts/profile_update.html'
     success_url = reverse_lazy('accounts:profile')
 
-    def get_form(self):
-        return self.form_class(instance=self.request.user)
+    def get_form(self, form_class=None):
+        if form_class is None:
+            form_class = self.get_form_class()
+        return form_class(instance=self.request.user, **self.get_form_kwargs())
     
     def form_valid(self, form):
         form.save()
@@ -89,3 +92,13 @@ class ProfileUpdateView(LoginRequiredMixin, FormView):
 
 class ChangePasswordView(LoginRequiredMixin, TemplateView):
     template_name = 'accounts/change_password.html'
+
+def basic_info_view(request):
+    if request.method == 'POST':
+        form = BasicInfoForm(request.POST, request.FILES, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('/')  # Change to your desired redirect URL
+    else:
+        form = BasicInfoForm(instance=request.user)
+    return render(request, 'accounts/basic_info.html', {'form': form})
