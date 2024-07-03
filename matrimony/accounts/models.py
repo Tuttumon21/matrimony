@@ -11,8 +11,10 @@ class User(AbstractUser):
         verbose_name='email address',
     )
     phone_number = models.CharField(
-        max_length=15, 
-        blank=True, 
+        max_length=15,
+        unique=True, 
+        blank=True,
+        null=True,
         verbose_name='Phone number'
     )
     date_of_birth = models.DateField(
@@ -20,16 +22,11 @@ class User(AbstractUser):
         blank=True, 
         verbose_name='Date of birth'
     )
-    GENDER_CHOICES = (
-        ('M', 'Male'),
-        ('F', 'Female'),
-        ('O', 'Other'),
-    )
     gender = models.CharField(
-        max_length=1, 
-        choices=GENDER_CHOICES, 
+        max_length=10, 
         blank=False, 
         verbose_name='Gender',
+        choices=[('MALE', 'Male'),('FEMALE', 'Female'),('OTHER', 'Other')] 
     )
     education_level = models.CharField(
         max_length=50,
@@ -48,6 +45,36 @@ class User(AbstractUser):
             )
         self.email = self.email.lower()
         super(User, self).save(*args, **kwargs)
+
+    smoking_status = models.CharField(max_length=20,default='Non-smoker', choices=[('Non-smoker', 'Non-smoker'),('Smoker', 'Smoker'),('Occasional', 'Occasional'),])
+    drinking_status = models.CharField(max_length=20,default='Non-drinker', choices=[('Non-drinker', 'Non-drinker'),('Drinker', 'Drinker'),('Occasional', 'Occasional'),])
+
+    HOBBIES_CHOICES = [
+        ('reading', 'Reading'),
+        ('travelling', 'Travelling'),
+        ('sports', 'Sports'),
+        ('music', 'Music'),
+    ]
+
+    INTEREST_CHOICES = [
+        ('technology', 'Technology'),
+        ('art', 'Art'),
+        ('fitness', 'Fitness'),
+        ('cooking', 'Cooking'),
+    ]
+
+    hobbies = models.TextField(blank=True)
+    interest = models.TextField(blank=True)
+
+
+
+
+
+
+
+
+
+
 
 @property
 def is_basic_profile_complete(self):

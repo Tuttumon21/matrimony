@@ -14,5 +14,6 @@ urlpatterns = [
 
 
     path('basic_info/', basic_info_view, name='basic_info'),
+    path('lifestyle_info/', lifestyle_view, name='lifestyle_info'),
     
 ]

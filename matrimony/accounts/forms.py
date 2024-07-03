@@ -74,8 +74,46 @@ class BasicInfoForm(forms.ModelForm):
             'last_name': forms.TextInput(attrs={'class': 'form-control'}),
             'gender': forms.Select(attrs={'class': 'form-control'}),
             'age': forms.TextInput(attrs={'class': 'form-control', 'readonly': 'readonly', 'placeholder': 'Age will Automatically calculate'}),
-            'phone_number': forms.TextInput(attrs={'class': 'form-control'}),
+            'phone_number': forms.NumberInput(attrs={'class': 'form-control'}),
             'date_of_birth': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'education_level': forms.Select(attrs={'class': 'form-control'}),
             'profile_pic': forms.FileInput(attrs={'class': 'form-control'}),
         }
+
+class LifeStyleForm(forms.ModelForm):
+    
+    hobbies = forms.MultipleChoiceField(
+        choices=User.HOBBIES_CHOICES,
+        widget=forms.CheckboxSelectMultiple,
+    )
+    interest = forms.MultipleChoiceField(
+        choices=User.INTEREST_CHOICES,
+        widget=forms.CheckboxSelectMultiple,
+    )
+
+    class Meta:
+        model = User
+        fields = [
+            'smoking_status',
+            'drinking_status',
+            'hobbies',
+            'interest',
+        ]
+        widgets = {
+            'smoking_status': forms.Select(attrs={'class': 'form-control'}),
+            'drinking_status': forms.Select(attrs={'class': 'form-control'}),
+        }
+    def clean_hobbies(self):
+        return ','.join(self.cleaned_data.get('hobbies', []))
+
+    def clean_interest(self):
+        return ','.join(self.cleaned_data.get('interest', []))
+
+    def __init__(self, *args, **kwargs):
+        if kwargs.get('instance'):
+            initial = kwargs.setdefault('initial', {})
+            if kwargs['instance'].hobbies:
+                initial['hobbies'] = kwargs['instance'].hobbies.split(',')
+            if kwargs['instance'].interest:
+                initial['interest'] = kwargs['instance'].interest.split(',')
+        super(LifeStyleForm, self).__init__(*args, **kwargs)

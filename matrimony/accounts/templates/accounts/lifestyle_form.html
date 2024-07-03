@@ -1,0 +1,26 @@
+<!-- lifestyle_form.html -->
+{% extends 'shared/base.html' %}
+
+{% block content %}
+<div class="row">
+  <div class="col-sm-8 offset-sm-2 mt-5 shadow p-4">
+    <h1 class="text-center">Update Lifestyle Information</h1>
+    <form method="post">
+      {% csrf_token %}
+      {% include 'components/form_field.html' with field=form.smoking_status %}
+      {% include 'components/form_field.html' with field=form.drinking_status %}
+      <div>
+        <label for="id_hobbies">Hobbies</label>
+        {{ form.hobbies }}
+      </div>
+      <div>
+        <label for="id_interest">Interest</label>
+        {{ form.interest }}
+      </div>
+      <div class="d-grid">
+        <button type="submit" class="btn btn-success my-3">Save</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
