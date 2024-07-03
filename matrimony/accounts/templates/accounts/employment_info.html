@@ -1,0 +1,57 @@
+{% extends 'shared/base.html' %}
+
+{% block content %}
+<div class="row">
+  <div class="col-sm-8 offset-sm-2 mt-5 shadow p-4">
+    <h1 class="text-center">Update Employment Status</h1>
+    <form method="post">
+      {% csrf_token %}
+      
+      <!-- Employment status selection field -->
+      {% include 'components/form_field.html' with field=form.employment_status %}
+
+      <!-- Conditional fields for employee/employer -->
+      <div id="employee_fields" style="display: none;">
+        {% include 'components/form_field.html' with field=form.company_name %}
+        {% include 'components/form_field.html' with field=form.designation %}
+        {% include 'components/form_field.html' with field=form.work_location %}
+      </div>
+
+      <!-- Conditional fields for job seeker -->
+      <div id="jobseeker_fields" style="display: none;">
+        {% include 'components/form_field.html' with field=form.job_title %}
+        {% include 'components/form_field.html' with field=form.expert_level %}
+      </div>
+
+      <div class="d-grid">
+        <button type="submit" class="btn btn-success my-3">Save</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const employmentStatusField = document.getElementById('id_employment_status');
+    const employeeFields = document.getElementById('employee_fields');
+    const jobseekerFields = document.getElementById('jobseeker_fields');
+
+    function toggleFields() {
+      const value = employmentStatusField.value;
+      if (value === 'employee' || value === 'employer') {
+        employeeFields.style.display = 'block';
+        jobseekerFields.style.display = 'none';
+      } else if (value === 'jobseeker') {
+        employeeFields.style.display = 'none';
+        jobseekerFields.style.display = 'block';
+      } else {
+        employeeFields.style.display = 'none';
+        jobseekerFields.style.display = 'none';
+      }
+    }
+
+    employmentStatusField.addEventListener('change', toggleFields);
+    toggleFields();  // Initial call to set the correct visibility
+  });
+</script>
+{% endblock %}

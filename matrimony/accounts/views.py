@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect,reverse
-from.forms import LoginForm, RegistrationForm, ProfileUpdateForm, BasicInfoForm, LifeStyleForm
+from.forms import LoginForm, RegistrationForm, ProfileUpdateForm, BasicInfoForm, LifeStyleForm, EmploymentStatusForm
 from django.contrib.auth import authenticate, login, logout
 from .models import User
 from django.forms.forms import BaseForm
@@ -108,7 +108,17 @@ def lifestyle_view(request):
         form = LifeStyleForm(request.POST, instance=request.user)
         if form.is_valid():
             form.save()
-            return redirect('/')
+            return redirect(reverse('accounts:employment_status'))
     else:
         form = LifeStyleForm(instance=request.user)
     return render(request, 'accounts/lifestyle_form.html', {'form': form})
+
+def employment_status_view(request):
+    if request.method == 'POST':
+        form = EmploymentStatusForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('/')
+    else:
+        form = EmploymentStatusForm()
+    return render(request, 'accounts/employment_info.html', {'form': form})

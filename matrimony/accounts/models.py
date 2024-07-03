@@ -67,6 +67,13 @@ class User(AbstractUser):
     interest = models.TextField(blank=True)
 
 
+    employment_status = models.CharField(max_length=10,default='employee', choices=[('employee', 'Employee'),('employer', 'Employer'),('jobseeker', 'Job Seeker'),])
+    company_name = models.CharField(max_length=100, blank=True)
+    designation = models.CharField(max_length=100, blank=True)
+    work_location = models.CharField(max_length=100, blank=True)
+    job_title = models.CharField(max_length=100, blank=True)
+    expert_level = models.CharField(max_length=15, blank=True,default='beginner', choices=[('beginner', 'Beginner'),('intermediate', 'Intermediate'),('expert', 'Expert'),])
+
 
 
 

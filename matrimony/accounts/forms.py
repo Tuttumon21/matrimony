@@ -117,3 +117,25 @@ class LifeStyleForm(forms.ModelForm):
             if kwargs['instance'].interest:
                 initial['interest'] = kwargs['instance'].interest.split(',')
         super(LifeStyleForm, self).__init__(*args, **kwargs)
+
+
+
+class EmploymentStatusForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = [
+            'employment_status',
+            'company_name',
+            'designation',
+            'work_location',
+            'job_title',
+            'expert_level',
+        ]
+        widgets = {
+            'employment_status': forms.Select(attrs={'class': 'form-control'}),
+            'company_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'designation': forms.TextInput(attrs={'class': 'form-control'}),
+            'work_location': forms.TextInput(attrs={'class': 'form-control'}),
+            'job_title': forms.TextInput(attrs={'class': 'form-control'}),
+            'expert_level': forms.Select(attrs={'class': 'form-control'}),
+        }
