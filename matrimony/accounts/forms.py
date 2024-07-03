@@ -24,6 +24,10 @@ class LoginForm(Form):
         })
     )
 
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        return email.lower()
+
 class RegistrationForm(ModelForm):
     
     confirm_password = CharField(
@@ -51,6 +55,12 @@ class RegistrationForm(ModelForm):
             'password': PasswordInput(attrs={'class': 'form-control'}),
 
         }
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email').lower()
+        if User.objects.filter(email__iexact=email).exists():
+            raise forms.ValidationError('A user with that email already exists.')
+        return email
 
 class ProfileUpdateForm(RegistrationForm):
     password = None

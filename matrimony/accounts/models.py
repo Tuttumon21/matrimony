@@ -38,6 +38,8 @@ class User(AbstractUser):
     profile_pic = models.ImageField(upload_to='profile_pics/', null=True, blank=True)
 
     def save(self, *args, **kwargs):
+        if self.email:
+            self.email = self.email.lower()
         if self.date_of_birth:
             today = date.today()
             self.age = today.year - self.date_of_birth.year - (

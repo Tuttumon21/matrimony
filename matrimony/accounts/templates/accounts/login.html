@@ -3,13 +3,18 @@
   <div class="col-sm-4 offset-sm-4 mt-5 shadow">
     <h2 class="text-center">Login Here</h2>
     <form method="post">
+      {% csrf_token %}
       {% include 'components/form_field.html' with field=form.email %}
       {% include 'components/form_field.html' with field=form.password %}
       <div class="d-grid">
-        {% csrf_token %}
         <button type="submit" class="btn btn-primary my-3">Login</button>
         <p class="text-end">Don't have an account! <a href="{% url 'accounts:register' %}">Register</a></p>
       </div>
+      {% if form.non_field_errors %}
+        <div class="alert alert-danger">
+          {{ form.non_field_errors }}
+        </div>
+      {% endif %}
     </form>
   </div>
 </div>

@@ -21,21 +21,22 @@ class LoginView(View):
         form = LoginForm(request.POST)
         context['form'] = form
         if form.is_valid():
-            email = form.cleaned_data.get('email')
+            email = form.cleaned_data.get('email').lower()
             password = form.cleaned_data.get('password')
             try:
                 user_from_db = User.objects.get(email=email)
                 username = user_from_db.username
                 user = authenticate(request, username=username, password=password)
-                if not user:
-                    return render(request, 'accounts/login.html', context)
-
-                login(request, user)
-                return redirect('/')
+                if user is not None:
+                    login(request, user)
+                    return redirect('/')
                 # return redirect('matrimonyApp:home')
+                else:
+                    form.add_error(None, 'Invalid email or password.')
 
             except User.DoesNotExist:
-                return render(request, 'accounts/login.html', context)
+                form.add_error(None, 'Invalid email or password.')
+                # return render(request, 'accounts/login.html', context)
             
         return render(request, 'accounts/login.html', context)
 
@@ -57,7 +58,6 @@ def user_registration(request):
             user.set_password(user.password)
             user.save()
             login(request, user)
-            # return redirect(reverse('accounts:basic_info'))
             return redirect(reverse('accounts:basic_info'))
 
         except:
