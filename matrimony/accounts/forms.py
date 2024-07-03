@@ -139,3 +139,11 @@ class EmploymentStatusForm(forms.ModelForm):
             'job_title': forms.TextInput(attrs={'class': 'form-control'}),
             'expert_level': forms.Select(attrs={'class': 'form-control'}),
         }
+
+class RelationshipTypeForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['relationship_type']
+        widgets = {
+            'relationship_type': forms.Select(attrs={'class':'form-control'}),
+        }

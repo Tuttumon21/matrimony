@@ -16,5 +16,6 @@ urlpatterns = [
     path('basic_info/', basic_info_view, name='basic_info'),
     path('lifestyle_info/', lifestyle_view, name='lifestyle_info'),
     path('employment_info/', employment_status_view, name='employment_status'),
+    path('relationship_info/', relationship_type_view, name='relationship_type'),
     
 ]

@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect,reverse
-from.forms import LoginForm, RegistrationForm, ProfileUpdateForm, BasicInfoForm, LifeStyleForm, EmploymentStatusForm
+from.forms import LoginForm, RegistrationForm, ProfileUpdateForm, BasicInfoForm, LifeStyleForm, EmploymentStatusForm,RelationshipTypeForm
 from django.contrib.auth import authenticate, login, logout
 from .models import User
 from django.forms.forms import BaseForm
@@ -118,7 +118,21 @@ def employment_status_view(request):
         form = EmploymentStatusForm(request.POST, instance=request.user)
         if form.is_valid():
             form.save()
-            return redirect('/')
+            return redirect(reverse('accounts:relationship_type'))
     else:
-        form = EmploymentStatusForm()
+        form = EmploymentStatusForm(instance=request.user)
     return render(request, 'accounts/employment_info.html', {'form': form})
+
+def relationship_type_view(request):
+    if request.method == 'POST':
+        form = RelationshipTypeForm(request.POST, instance=request.user)
+        if form.is_valid():
+            relationship_type_instance = form.save()
+
+            if relationship_type_instance.relationship_type == 'short_term':
+                return redirect('datingapp_dashboard')  # URL name for the dating app dashboard
+            else:
+                return redirect('/')  # URL name for the matrimony app dashboard
+    else:
+        form = RelationshipTypeForm(instance=request.user)
+    return render(request, 'accounts/relationship_type.html', {'form': form})

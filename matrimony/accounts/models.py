@@ -74,7 +74,12 @@ class User(AbstractUser):
     job_title = models.CharField(max_length=100, blank=True)
     expert_level = models.CharField(max_length=15, blank=True,default='beginner', choices=[('beginner', 'Beginner'),('intermediate', 'Intermediate'),('expert', 'Expert'),])
 
-
+    
+    RELATIONSHIP_CHOICES = [
+        ('short_term', 'Short Term'),
+        ('long_term', 'Long Term'),
+    ]
+    relationship_type = models.CharField(max_length=10,default='short_term', choices=RELATIONSHIP_CHOICES)
 
 
 
