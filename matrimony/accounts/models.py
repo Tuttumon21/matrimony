@@ -43,7 +43,6 @@ class User(AbstractUser):
             self.age = today.year - self.date_of_birth.year - (
                 (today.month, today.day) < (self.date_of_birth.month, self.date_of_birth.day)
             )
-        self.email = self.email.lower()
         super(User, self).save(*args, **kwargs)
 
     smoking_status = models.CharField(max_length=20,default='Non-smoker', choices=[('Non-smoker', 'Non-smoker'),('Smoker', 'Smoker'),('Occasional', 'Occasional'),])

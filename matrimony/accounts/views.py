@@ -32,6 +32,7 @@ class LoginView(View):
 
                 login(request, user)
                 return redirect('/')
+                # return redirect('matrimonyApp:home')
 
             except User.DoesNotExist:
                 return render(request, 'accounts/login.html', context)
