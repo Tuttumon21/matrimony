@@ -1,0 +1,68 @@
+{% extends 'shared/matrimonybase.html' %}
+{% block content %}
+<div class="row">
+  <div class="col-sm-8 offset-sm-2 mt-5 shadow p-4">
+    <h1 class="text-center">Partner Preference</h1>
+    <form method="post">
+      {% csrf_token %}
+      <div class="form-group">
+        <label for="id_age_min">Minimum Age: <span id="age_min_value">{{ form.age_min.value }}</span></label>
+        {{ form.age_min }}
+      </div>
+      <div class="form-group">
+        <label for="id_age_max">Maximum Age: <span id="age_max_value">{{ form.age_max.value }}</span></label>
+        {{ form.age_max }}
+      </div>
+      <div class="form-group">
+        <label for="id_height_min">Minimum Height: <span id="height_min_value">{{ form.height_min.value }}</span> cm</label>
+        {{ form.height_min }}
+      </div>
+      <div class="form-group">
+        <label for="id_height_max">Maximum Height: <span id="height_max_value">{{ form.height_max.value }}</span> cm</label>
+        {{ form.height_max }}
+      </div>
+      <div class="form-group">
+        <label for="id_weight_min">Minimum Weight: <span id="weight_min_value">{{ form.weight_min.value }}</span> kg</label>
+        {{ form.weight_min }}
+      </div>
+      <div class="form-group">
+        <label for="id_weight_max">Maximum Weight: <span id="weight_max_value">{{ form.weight_max.value }}</span> kg</label>
+        {{ form.weight_max }}
+      </div>
+      <div class="form-group">
+        <label for="id_income_min">Minimum Income: ₹<span id="income_min_value">{{ form.income_min.value }}</span></label>
+        {{ form.income_min }}
+      </div>
+      <div class="form-group">
+        <label for="id_income_max">Maximum Income: ₹<span id="income_max_value">{{ form.income_max.value }}</span></label>
+        {{ form.income_max }}
+      </div>
+      {% include 'components/form_field.html' with field=form.caste %}
+      {% include 'components/form_field.html' with field=form.religion %}
+      {% include 'components/form_field.html' with field=form.qualification %}
+      <div class="d-grid">
+        <button type="submit" class="btn btn-success my-3">Save</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  const updateValue = (sliderId, displayId) => {
+    const slider = document.getElementById(sliderId);
+    const display = document.getElementById(displayId);
+    slider.addEventListener('input', () => {
+      display.textContent = slider.value;
+    });
+  };
+
+  updateValue('id_age_min', 'age_min_value');
+  updateValue('id_age_max', 'age_max_value');
+  updateValue('id_height_min', 'height_min_value');
+  updateValue('id_height_max', 'height_max_value');
+  updateValue('id_weight_min', 'weight_min_value');
+  updateValue('id_weight_max', 'weight_max_value');
+  updateValue('id_income_min', 'income_min_value');
+  updateValue('id_income_max', 'income_max_value');
+</script>
+{% endblock %}

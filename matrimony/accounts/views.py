@@ -29,7 +29,7 @@ class LoginView(View):
                 user = authenticate(request, username=username, password=password)
                 if user is not None:
                     login(request, user)
-                    return redirect('/')
+                    return redirect('matrimonyApp:home')
                 # return redirect('matrimonyApp:home')
                 else:
                     form.add_error(None, 'Invalid email or password.')
