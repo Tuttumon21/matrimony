@@ -80,15 +80,20 @@ class BasicInfoForm(forms.ModelForm):
             'profile_pic',
         ]
         widgets = {
-            'first_name': forms.TextInput(attrs={'class': 'form-control'}),
-            'last_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'first_name': forms.TextInput(attrs={'class': 'form-control', 'required': 'true'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control', 'required': 'true'}),
             'gender': forms.Select(attrs={'class': 'form-control'}),
             'age': forms.TextInput(attrs={'class': 'form-control', 'readonly': 'readonly', 'placeholder': 'Age will Automatically calculate'}),
-            'phone_number': forms.NumberInput(attrs={'class': 'form-control'}),
-            'date_of_birth': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
-            'education_level': forms.Select(attrs={'class': 'form-control'}),
-            'profile_pic': forms.FileInput(attrs={'class': 'form-control'}),
+            'phone_number': forms.NumberInput(attrs={'class': 'form-control', 'required': 'true'}),
+            'date_of_birth': forms.DateInput(attrs={'class': 'form-control', 'type': 'date', 'required': 'true'}),
+            'education_level': forms.Select(attrs={'class': 'form-control', 'required': 'true'}),
+            'profile_pic': forms.FileInput(attrs={'class': 'form-control', 'required': 'true'}),
         }
+    
+    def __init__(self, *args, **kwargs):
+        super(BasicInfoForm, self).__init__(*args, **kwargs)
+        self.fields['last_name'].required = True
+        self.fields['first_name'].required = True
 
 class LifeStyleForm(forms.ModelForm):
     
@@ -110,8 +115,10 @@ class LifeStyleForm(forms.ModelForm):
             'interest',
         ]
         widgets = {
-            'smoking_status': forms.Select(attrs={'class': 'form-control'}),
-            'drinking_status': forms.Select(attrs={'class': 'form-control'}),
+            'smoking_status': forms.Select(attrs={'class': 'form-control', 'required': 'true'}),
+            'drinking_status': forms.Select(attrs={'class': 'form-control', 'required': 'true'}),
+            'hobbies': forms.CheckboxSelectMultiple(attrs={'class': 'form-check-input', 'required': 'true'}),
+            'interest': forms.CheckboxSelectMultiple(attrs={'class': 'form-check-input', 'required': 'true'}),
         }
     def clean_hobbies(self):
         return ','.join(self.cleaned_data.get('hobbies', []))
@@ -142,7 +149,7 @@ class EmploymentStatusForm(forms.ModelForm):
             'expert_level',
         ]
         widgets = {
-            'employment_status': forms.Select(attrs={'class': 'form-control'}),
+            'employment_status': forms.Select(attrs={'class': 'form-control', 'required': 'true'}),
             'company_name': forms.TextInput(attrs={'class': 'form-control'}),
             'designation': forms.TextInput(attrs={'class': 'form-control'}),
             'work_location': forms.TextInput(attrs={'class': 'form-control'}),
@@ -155,5 +162,5 @@ class RelationshipTypeForm(forms.ModelForm):
         model = User
         fields = ['relationship_type']
         widgets = {
-            'relationship_type': forms.Select(attrs={'class':'form-control'}),
+            'relationship_type': forms.Select(attrs={'class':'form-control', 'required': 'true'}),
         }

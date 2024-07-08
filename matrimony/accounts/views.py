@@ -40,7 +40,7 @@ class LoginView(View):
                     form.add_error(None, 'Invalid email or password.')
 
             except User.DoesNotExist:
-                form.add_error(None, 'Invalid email or password.')
+                form.add_error(None, 'Invalid email or password.User does not exist.')
                 # return render(request, 'accounts/login.html', context)
             
         return render(request, 'accounts/login.html', context)
@@ -115,6 +115,8 @@ def lifestyle_view(request):
         if form.is_valid():
             form.save()
             return redirect(reverse('accounts:employment_status'))
+        else:
+            form.add_error(None, 'Please fill in all required fields.')
     else:
         form = LifeStyleForm(instance=request.user)
     return render(request, 'accounts/lifestyle_form.html', {'form': form})

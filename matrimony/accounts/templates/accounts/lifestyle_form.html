@@ -10,12 +10,16 @@
       {% include 'components/form_field.html' with field=form.smoking_status %}
       {% include 'components/form_field.html' with field=form.drinking_status %}
       <div>
-        <label for="id_hobbies">Hobbies</label>
-        {{ form.hobbies }}
+        <!-- <label for="id_hobbies">Hobbies</label> -->
+        <div class="checkbox-group">
+          {% include 'components/form_field.html' with field=form.hobbies %}
+        </div>
       </div>
       <div>
-        <label for="id_interest">Interest</label>
-        {{ form.interest }}
+        <!-- <label for="id_interest">Interest</label> -->
+        <div class="checkbox-group">
+          {% include 'components/form_field.html' with field=form.interest %}
+        </div>
       </div>
       <div class="d-grid">
         <button type="submit" class="btn btn-success my-3">Save</button>

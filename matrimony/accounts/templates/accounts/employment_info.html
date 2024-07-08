@@ -36,22 +36,43 @@
     const employeeFields = document.getElementById('employee_fields');
     const jobseekerFields = document.getElementById('jobseeker_fields');
 
+    const companyName = document.getElementById('id_company_name');
+    const designation = document.getElementById('id_designation');
+    const workLocation = document.getElementById('id_work_location');
+    const jobTitle = document.getElementById('id_job_title');
+    const expertLevel = document.getElementById('id_expert_level');
+
     function toggleFields() {
       const value = employmentStatusField.value;
       if (value === 'employee' || value === 'employer') {
         employeeFields.style.display = 'block';
         jobseekerFields.style.display = 'none';
+        companyName.required = true;
+        designation.required = true;
+        workLocation.required = true;
+        jobTitle.required = false;
+        expertLevel.required = false;
       } else if (value === 'jobseeker') {
         employeeFields.style.display = 'none';
         jobseekerFields.style.display = 'block';
+        companyName.required = false;
+        designation.required = false;
+        workLocation.required = false;
+        jobTitle.required = true;
+        expertLevel.required = true;
       } else {
         employeeFields.style.display = 'none';
         jobseekerFields.style.display = 'none';
+        companyName.required = false;
+        designation.required = false;
+        workLocation.required = false;
+        jobTitle.required = false;
+        expertLevel.required = false;
       }
     }
 
     employmentStatusField.addEventListener('change', toggleFields);
-    toggleFields();  // Initial call to set the correct visibility
+    toggleFields();  // Initial call to set the correct visibility and required attribute
   });
 </script>
 {% endblock %}
