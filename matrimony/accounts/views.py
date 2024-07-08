@@ -29,7 +29,12 @@ class LoginView(View):
                 user = authenticate(request, username=username, password=password)
                 if user is not None:
                     login(request, user)
-                    return redirect('matrimonyApp:home')
+
+                    if user_from_db.relationship_type == 'long_term':
+                        return redirect('matrimonyApp:home')
+                    elif user_from_db.relationship_type == 'short_term':
+                        return redirect('/')
+                    # return redirect('matrimonyApp:home')
                 # return redirect('matrimonyApp:home')
                 else:
                     form.add_error(None, 'Invalid email or password.')
@@ -133,7 +138,7 @@ def relationship_type_view(request):
             if relationship_type_instance.relationship_type == 'short_term':
                 return redirect('datingapp_dashboard')  # URL name for the dating app dashboard
             else:
-                return redirect('/')  # URL name for the matrimony app dashboard
+                return redirect(reverse('matrimonyApp:parents_details'))  # URL name for the matrimony app dashboard
     else:
         form = RelationshipTypeForm(instance=request.user)
     return render(request, 'accounts/relationship_type.html', {'form': form})

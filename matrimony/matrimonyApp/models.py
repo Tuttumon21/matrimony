@@ -41,7 +41,9 @@ class ParentsDetails(models.Model):
 
     caste = models.CharField(max_length=100)
     religion = models.CharField(max_length=100)
-    zodiac_sign = models.CharField(max_length=100)
+    zodiac_sign = models.CharField(max_length=100,choices=[ ('Aries', 'Aries'), ('Taurus', 'Taurus'), ('Gemini', 'Gemini'), ('Cancer', 'Cancer'),
+    ('Leo', 'Leo'), ('Virgo', 'Virgo'), ('Libra', 'Libra'),('Scorpio', 'Scorpio'),('Sagittarius', 'Sagittarius'),('Capricorn','Capricorn'),
+    ('Aquarius', 'Aquarius'),('Pisces', 'Pisces')])
     horoscope = models.FileField(upload_to='horoscopes/')
 
 class PartnerPreference(models.Model):

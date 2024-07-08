@@ -1,7 +1,7 @@
 from django import forms
 from django.forms import Form,IntegerField
 from .models import ParentsDetails, PartnerPreference
-from .widgets import RangeSliderWidget
+
 
 
 class ParentsDetailsForm(forms.ModelForm):
@@ -34,33 +34,8 @@ class ParentsDetailsForm(forms.ModelForm):
             'weight': forms.NumberInput(attrs={'class': 'form-control'}),
             'caste': forms.TextInput(attrs={'class': 'form-control'}),
             'religion': forms.TextInput(attrs={'class': 'form-control'}),
-            'zodiac_sign': forms.TextInput(attrs={'class': 'form-control'}),
+            'zodiac_sign': forms.Select(attrs={'class': 'form-control', 'placeholder': 'Select'}),
             'horoscope': forms.FileInput(attrs={'class': 'form-control'}),
         }
 
-class PartnerPreferenceForm(forms.ModelForm):
-    age_range = forms.CharField(widget=RangeSliderWidget(attrs={'min': '18', 'max': '60'}), label='Age Range')
-    class Meta:
-        model = PartnerPreference
-        fields = [
-            # 'age_min', 'age_max', 'caste', 'religion', 
-            'age_range',
-            'height_min', 'height_max', 'weight_min', 'weight_max', 
-            'income_min', 'income_max', 'qualification','caste',
-            'religion',
-        ]
-        widgets = {
-            # 'age_min': forms.NumberInput(attrs={'type': 'range', 'min': '18', 'max': '70', 'step': '1', 'class': 'form-range'}),
-            # 'age_max': forms.NumberInput(attrs={'type': 'range', 'min': '18', 'max': '70', 'step': '1', 'class': 'form-range'}),
-            'height_min': forms.NumberInput(attrs={'type': 'range', 'min': '100', 'max': '250', 'step': '1', 'class': 'form-range'}),
-            'height_max': forms.NumberInput(attrs={'type': 'range', 'min': '100', 'max': '250', 'step': '1', 'class': 'form-range'}),
-            'weight_min': forms.NumberInput(attrs={'type': 'range', 'min': '30', 'max': '200', 'step': '1', 'class': 'form-range'}),
-            'weight_max': forms.NumberInput(attrs={'type': 'range', 'min': '30', 'max': '200', 'step': '1', 'class': 'form-range'}),
-            'income_min': forms.NumberInput(attrs={'type': 'range', 'min': '0', 'max': '1000000', 'step': '1000', 'class': 'form-range'}),
-            'income_max': forms.NumberInput(attrs={'type': 'range', 'min': '0', 'max': '1000000', 'step': '1000', 'class': 'form-range'}),
-            'caste': forms.Select(attrs={'class': 'form-control'}),
-
-            'religion': forms.Select(attrs={'class': 'form-control'}),
-            'qualification': forms.Select(attrs={'class': 'form-control'}),
-        }
-
+# class PartnerPreferenceForm(forms.ModelForm):
