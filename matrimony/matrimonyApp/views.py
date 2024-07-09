@@ -60,16 +60,7 @@ class SuggestionView(LoginRequiredMixin, TemplateView):
             partner_preference = user.partner_preference
             profiles = User.objects.filter(
                 age__gte=partner_preference.age_min,
-                age__lte=partner_preference.age_max,
-                parents_details__caste=partner_preference.caste,
-                parents_details__religion=partner_preference.religion,
-                parents_details__height__gte=partner_preference.height_min,
-                parents_details__height__lte=partner_preference.height_max,
-                parents_details__weight__gte=partner_preference.weight_min,
-                parents_details__weight__lte=partner_preference.weight_max,
-                parents_details__annual_income__gte=partner_preference.income_min,
-                parents_details__annual_income__lte=partner_preference.income_max,
-                education_level=partner_preference.qualification
+                age__lte=partner_preference.age_max
             ).exclude(id=user.id).select_related('partner_preference').prefetch_related('parents_details')
         except PartnerPreference.DoesNotExist:
             profiles = User.objects.none()  # If no partner preference, show no profiles
