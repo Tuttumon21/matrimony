@@ -1,42 +1,166 @@
 <!-- partner_preference_form.html -->
-<!-- Include noUiSlider CSS -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.6.4/nouislider.min.css">
 
-<!-- Include noUiSlider JS -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.6.4/nouislider.min.js"></script>
 
 <!-- matrimonyApp/partner_preference_form.html -->
 
 {% extends 'shared/matrimonybase.html' %}
+
+
 {% block content %}
 <div class="row">
-    <div class="col-sm-8 offset-sm-2 mt-5 shadow p-4">
-        <h1 class="text-center">Partner Preference</h1>
-        <form method="post">
-            {% csrf_token %}
-            <div class="form-group">
-                <label>Age Range</label>
-                {{ form.age_range }}
-            </div>
-            <div class="form-group">
-                <label>Height Range</label>
-                {{ form.height_range }}
-            </div>
-            <div class="form-group">
-                <label>Weight Range</label>
-                {{ form.weight_range }}
-            </div>
-            <div class="form-group">
-                <label>Income Range</label>
-                {{ form.income_range }}
-            </div>
-            {% include 'components/form_field.html' with field=form.caste %}
-            {% include 'components/form_field.html' with field=form.religion %}
-            {% include 'components/form_field.html' with field=form.qualification %}
-            <div class="d-grid">
-                <button type="submit" class="btn btn-success my-3">Save</button>
-            </div>
-        </form>
-    </div>
+  <div class="col-sm-8 offset-sm-2 mt-5 shadow p-4">
+    <h1 class="text-center">Update Partner Preference</h1>
+    <form method="post">
+      {% csrf_token %}
+      
+      <!-- Age Min and Max in one row -->
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="{{ form.age_min.id_for_label }}">{{ form.age_min.label }}</label>
+            {{ form.age_min }}
+            {% if form.age_min.errors %}
+              <div class="alert alert-danger">{{ form.age_min.errors }}</div>
+            {% endif %}
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="{{ form.age_max.id_for_label }}">{{ form.age_max.label }}</label>
+            {{ form.age_max }}
+            {% if form.age_max.errors %}
+              <div class="alert alert-danger">{{ form.age_max.errors }}</div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <!-- Height Min and Max in one row -->
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="{{ form.height_min.id_for_label }}">{{ form.height_min.label }}</label>
+            {{ form.height_min }}
+            {% if form.height_min.errors %}
+              <div class="alert alert-danger">{{ form.height_min.errors }}</div>
+            {% endif %}
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="{{ form.height_max.id_for_label }}">{{ form.height_max.label }}</label>
+            {{ form.height_max }}
+            {% if form.height_max.errors %}
+              <div class="alert alert-danger">{{ form.height_max.errors }}</div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <!-- Weight Min and Max in one row -->
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="{{ form.weight_min.id_for_label }}">{{ form.weight_min.label }}</label>
+            {{ form.weight_min }}
+            {% if form.weight_min.errors %}
+              <div class="alert alert-danger">{{ form.weight_min.errors }}</div>
+            {% endif %}
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="{{ form.weight_max.id_for_label }}">{{ form.weight_max.label }}</label>
+            {{ form.weight_max }}
+            {% if form.weight_max.errors %}
+              <div class="alert alert-danger">{{ form.weight_max.errors }}</div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <!-- Income Min and Max in one row -->
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="{{ form.income_min.id_for_label }}">{{ form.income_min.label }}</label>
+            {{ form.income_min }}
+            {% if form.income_min.errors %}
+              <div class="alert alert-danger">{{ form.income_min.errors }}</div>
+            {% endif %}
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="{{ form.income_max.id_for_label }}">{{ form.income_max.label }}</label>
+            {{ form.income_max }}
+            {% if form.income_max.errors %}
+              <div class="alert alert-danger">{{ form.income_max.errors }}</div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <!-- Other fields -->
+      <div class="form-group">
+        <label for="{{ form.caste.id_for_label }}">{{ form.caste.label }}</label>
+        {{ form.caste }}
+        {% if form.caste.errors %}
+          <div class="alert alert-danger">{{ form.caste.errors }}</div>
+        {% endif %}
+      </div>
+
+      <div class="form-group">
+        <label for="{{ form.religion.id_for_label }}">{{ form.religion.label }}</label>
+        {{ form.religion }}
+        {% if form.religion.errors %}
+          <div class="alert alert-danger">{{ form.religion.errors }}</div>
+        {% endif %}
+      </div>
+
+      <div class="form-group">
+        <label for="{{ form.qualification.id_for_label }}">{{ form.qualification.label }}</label>
+        {{ form.qualification }}
+        {% if form.qualification.errors %}
+          <div class="alert alert-danger">{{ form.qualification.errors }}</div>
+        {% endif %}
+      </div>
+
+      <div class="d-grid">
+        <button type="submit" class="btn btn-success my-3">Save</button>
+      </div>
+    </form>
+  </div>
 </div>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+      function enforceMinMax(minFieldId, maxFieldId) {
+        const minField = document.getElementById(minFieldId);
+        const maxField = document.getElementById(maxFieldId);
+  
+        minField.addEventListener('input', function() {
+          if (parseInt(maxField.value) < parseInt(minField.value)) {
+            maxField.value = minField.value;
+          }
+          maxField.min = minField.value;
+        });
+  
+        maxField.addEventListener('input', function() {
+          if (parseInt(maxField.value) < parseInt(minField.value)) {
+            maxField.value = minField.value;
+          }
+        });
+      }
+  
+      enforceMinMax('id_age_min', 'id_age_max');
+      enforceMinMax('id_height_min', 'id_height_max');
+      enforceMinMax('id_weight_min', 'id_weight_max');
+      enforceMinMax('id_income_min', 'id_income_max');
+    });
+  </script>
+
+  
 {% endblock %}
+

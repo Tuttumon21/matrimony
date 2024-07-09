@@ -39,8 +39,13 @@ class ParentsDetails(models.Model):
     height = models.PositiveIntegerField()
     weight = models.PositiveIntegerField()
 
-    caste = models.CharField(max_length=100)
-    religion = models.CharField(max_length=100)
+    caste = models.CharField(max_length=100,choices=[ ('Brahmin', 'Brahmin'), ('Kshatriya', 'Kshatriya'), ('Vaishya', 'Vaishya'),
+    ('Shudra', 'Shudra'), ('Dalit', 'Dalit'), ('Koli', 'Koli'), ('Gujar', 'Gujar'),
+    ('Lodhi', 'Lodhi'), (' Yadav', 'Yadav'), ('Jat', 'Jat') ,('Others','Others')]
+)
+    religion = models.CharField(max_length=100,choices=[ ('Christianity', 'Christianity'), ('Islam', 'Islam'), ('Hinduism', 'Hinduism'),
+    ('Buddhism', 'Buddhism'), ('Sikhism', 'Sikhism'), ('Judaism', 'Judaism'), ('Baha’i', 'Baha’i'), ('Jainism', 'Jainism'),
+    ('Shintoism', 'Shintoism'), ('Cao Dai', 'Cao Dai'),('Others','Others')])
     zodiac_sign = models.CharField(max_length=100,choices=[ ('Aries', 'Aries'), ('Taurus', 'Taurus'), ('Gemini', 'Gemini'), ('Cancer', 'Cancer'),
     ('Leo', 'Leo'), ('Virgo', 'Virgo'), ('Libra', 'Libra'),('Scorpio', 'Scorpio'),('Sagittarius', 'Sagittarius'),('Capricorn','Capricorn'),
     ('Aquarius', 'Aquarius'),('Pisces', 'Pisces')])
@@ -50,8 +55,13 @@ class PartnerPreference(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='partner_preference')
     age_min = models.PositiveIntegerField()
     age_max = models.PositiveIntegerField()
-    caste = models.CharField(max_length=100)
-    religion = models.CharField(max_length=100)
+    caste = models.CharField(max_length=100,choices=[ ('Brahmin', 'Brahmin'), ('Kshatriya', 'Kshatriya'), ('Vaishya', 'Vaishya'),
+    ('Shudra', 'Shudra'), ('Dalit', 'Dalit'), ('Koli', 'Koli'), ('Gujar', 'Gujar'),
+    ('Lodhi', 'Lodhi'), (' Yadav', 'Yadav'), ('Jat', 'Jat') ,('Others','Others')]
+)
+    religion = models.CharField(max_length=100,choices=[ ('Christianity', 'Christianity'), ('Islam', 'Islam'), ('Hinduism', 'Hinduism'),
+    ('Buddhism', 'Buddhism'), ('Sikhism', 'Sikhism'), ('Judaism', 'Judaism'), ('Baha’i', 'Baha’i'), ('Jainism', 'Jainism'),
+    ('Shintoism', 'Shintoism'), ('Cao Dai', 'Cao Dai'),('Others','Others')])
     height_min = models.PositiveIntegerField()
     height_max = models.PositiveIntegerField()
     weight_min = models.PositiveIntegerField()
