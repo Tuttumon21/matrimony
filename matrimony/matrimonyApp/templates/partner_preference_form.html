@@ -64,7 +64,7 @@
             <label for="{{ form.weight_min.id_for_label }}">{{ form.weight_min.label }}</label>
             {{ form.weight_min }}
             {% if form.weight_min.errors %}
-              <div class="alert alert-danger">{{ form.weight_min.errors }}</div>
+              <div class="alert alert-danger">{{ form.weight_min.errors }} in Kg</div>
             {% endif %}
           </div>
         </div>
@@ -161,6 +161,6 @@
     });
   </script>
 
-  
+
 {% endblock %}
 

@@ -15,7 +15,7 @@
     <div class="collapse navbar-collapse" id="navbarNavDropdown">
       <ul class="navbar-nav">
         <li class="nav-item">
-          <a class="nav-link" style="color: black" aria-current="page" href="#">Home</a>
+          <a class="nav-link" style="color: black" aria-current="page" href="{% url 'matrimonyApp:home' %}">Home</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="#">Profiles</a>
@@ -35,7 +35,7 @@
               <a class="dropdown-item" href="{% url 'accounts:profile' %}">Account</a>
             </li>
             <li>
-              <a class="dropdown-item" href="#">Preference</a>
+              <a class="dropdown-item" href="{% url 'matrimonyApp:partner_preference' %}">Preference</a>
             </li>
             <li>
               <a class="dropdown-item" href="#">Profile Switch</a>
