@@ -2,6 +2,7 @@
 
 {% extends 'shared/matrimonybase.html' %}
 {% block content %}
+{% if profiles %}
 <div class="container mt-5">
     <h1 class="text-center">Suggested Profiles</h1>
     <div class="row">
@@ -10,29 +11,49 @@
             <div class="card mb-4 shadow-sm">
                 {% if profile.profile_pic %}
                 <img src="{{ profile.profile_pic.url }}" class="card-img-top" alt="{{ profile.get_full_name }}">
+                
                 {% endif %}
                 <div class="card-body">
                     <h5 class="card-title">{{ profile.get_full_name }}</h5>
                     <p class="card-text">Age: {{ profile.age }}</p>
-                    <p class="card-text">Caste: {{ profile.parents_details.caste }}</p>
-                    <p class="card-text">Religion: {{ profile.parents_details.religion }}</p>
-                    <p class="card-text">Height: {{ profile.parents_details.height }} cm</p>
-                    <p class="card-text">Weight: {{ profile.parents_details.weight }} kg</p>
-                    <p class="card-text">Income: {{ profile.parents_details.annual_income }}</p>
-                    <p class="card-text">Education: {{ profile.education_level }}</p>
+                    <p class="card-text">Location: {{ profile.parents_details.district }}</p>
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#profileModal{{ profile.id }}">
+                        View Profile
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal -->
+        <div class="modal fade" id="profileModal{{ profile.id }}" tabindex="-1" aria-labelledby="exampleModalLabel{{ profile.id }}" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel{{ profile.id }}">{{ profile.get_full_name }}</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p class="card-text">Age: {{ profile.age }}</p>
+                        <p class="card-text">Caste: {{ profile.parents_details.caste }}</p>
+                        <p class="card-text">Religion: {{ profile.parents_details.religion }}</p>
+                        <p class="card-text">Height: {{ profile.parents_details.height }} cm</p>
+                        <p class="card-text">Weight: {{ profile.parents_details.weight }} kg</p>
+                        <p class="card-text">Income: {{ profile.parents_details.annual_income }}</p>
+                        <p class="card-text">Education: {{ profile.education_level }}</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">Send Request</button>
+                    </div>
                 </div>
             </div>
         </div>
         {% endfor %}
     </div>
 </div>
-
-<div class="card mt-3" style="width: 18rem;">
-    <img src="..." class="card-img-top" alt="...">
-    <div class="card-body">
-      <h5 class="card-title">{{user.first_name}}</h5>
-      <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-      <a href="#" class="btn btn-primary">Go somewhere</a>
-    </div>
-  </div>
+{% else %}
+<div class="container mt-5">
+    <h1 class="text-center">No profiles yet.</h1>
+</div>
+{% endif %}
 {% endblock %}
