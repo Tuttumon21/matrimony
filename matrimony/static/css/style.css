@@ -1,0 +1,23 @@
+.carousel{
+    margin: 20px;
+}
+.d-block{
+    object-fit: cover;
+    max-height: 400px;
+}
+.fixed-text{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    z-index: 1;
+    color: rgb(255, 255, 255);
+    font-family: 'Times New Roman', Times, serif;
+    font-weight: bold;
+    font-size: 60px;
+}
+.fixed-text h2{
+    font-weight: bold;
+    font-size: 32px;
+}

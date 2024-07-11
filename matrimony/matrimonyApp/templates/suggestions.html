@@ -3,12 +3,12 @@
 {% extends 'shared/matrimonybase.html' %}
 {% block content %}
 {% if profiles %}
-<div class="container mt-5">
+<div class="container mt-2">
     <h1 class="text-center">Suggested Profiles</h1>
     <div class="row">
         {% for profile in profiles %}
         <div class="col-md-4" style="width: 20%;">
-            <div class="card mb-4 shadow-sm">
+            <div class="card mb-4 shadow-sm animate__animated animate__fadeInUp">
                 {% if profile.profile_pic %}
                 <img src="{{ profile.profile_pic.url }}" class="card-img-top" style="object-fit: cover; width: 100%;height: 200px;" alt="{{ profile.get_full_name }}">
                 
