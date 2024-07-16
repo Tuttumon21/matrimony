@@ -1,10 +1,15 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.views.generic import TemplateView
-from .forms import ParentsDetailsForm,PartnerPreferenceForm
+from django.views.generic import TemplateView,FormView
+from .forms import ParentsDetailsForm,PartnerPreferenceForm,FriendRequestForm
 from django.contrib.auth.decorators import login_required
-from .models import ParentsDetails,PartnerPreference
+from .models import ParentsDetails,PartnerPreference,FriendRequest
 from django.contrib.auth.mixins import LoginRequiredMixin
 from accounts.models import User
+from django.db.models import Q
+from django.views import View
+# from django.utils.decorators import method_decorator
+# from django.urls import reverse_lazy
+from django.http import JsonResponse
 # Create your views here.
 
 
@@ -74,6 +79,60 @@ class SuggestionView(LoginRequiredMixin, TemplateView):
             ).exclude(id=user.id).select_related('partner_preference').prefetch_related('parents_details')
             context['profiles'] = profiles
         except PartnerPreference.DoesNotExist:
-            profiles = User.objects.none()  # If no partner preference, show no profiles
+            profiles = User.objects.none()
 
         return context
+
+@login_required
+def send_request(request, profile_id):
+    to_user = get_object_or_404(User, id=profile_id)
+    from_user = request.user
+    if request.method == 'POST':
+        if not FriendRequest.objects.filter(from_user=from_user, to_user=to_user).exists():
+            FriendRequest.objects.create(from_user=from_user, to_user=to_user)
+    return redirect('matrimonyApp:suggestions')
+
+@login_required
+def respond_to_request(request, request_id, action):
+    friend_request = get_object_or_404(FriendRequest, id=request_id, to_user=request.user)
+    
+    if action == 'accept':
+        friend_request.status = 'accepted'
+    elif action == 'reject':
+        friend_request.status = 'rejected'
+    friend_request.save()
+    
+    return redirect('matrimonyApp:view_requests')
+
+@login_required
+def view_requests(request):
+    received_requests = FriendRequest.objects.filter(to_user=request.user, status='pending')
+    sent_requests = FriendRequest.objects.filter(from_user=request.user, status='pending')
+    
+    context = {
+        'received_requests': received_requests,
+        'sent_requests': sent_requests,
+    }
+    
+    return render(request, 'requests.html', context)
+
+@login_required
+def friends_list(request):
+    # Fetch accepted friend requests where the current user is either the sender or receiver
+    accepted_requests = FriendRequest.objects.filter(status='accepted').filter(
+        (Q(from_user=request.user) | Q(to_user=request.user))
+    )
+    
+    # Extract friends from accepted friend requests
+    friends = []
+    for req in accepted_requests:
+        if req.from_user == request.user:
+            friends.append(req.to_user)
+        else:
+            friends.append(req.from_user)
+    
+    context = {
+        'friends': friends,
+    }
+    
+    return render(request, 'friends_list.html', context)

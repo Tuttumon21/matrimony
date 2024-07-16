@@ -12,4 +12,12 @@ urlpatterns = [
 
     path('suggestions/',SuggestionView.as_view(), name='suggestions'),
 
+
+    path('send_request/<int:profile_id>/', views.send_request, name='send_request'),
+    
+    path('respond_to_request/<int:request_id>/<str:action>/', views.respond_to_request, name='respond_to_request'),
+    path('view_requests/', views.view_requests, name='view_requests'),
+
+    path('friends_list/', views.friends_list, name='friends_list'),
+
 ]

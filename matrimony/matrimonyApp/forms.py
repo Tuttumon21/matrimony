@@ -1,6 +1,6 @@
 from django import forms
 from django.forms import Form,IntegerField
-from .models import ParentsDetails, PartnerPreference
+from .models import ParentsDetails, PartnerPreference,FriendRequest
 
 
 
@@ -60,4 +60,8 @@ class PartnerPreferenceForm(forms.ModelForm):
             'qualification': forms.Select(attrs={'class': 'form-control', 'required': 'true'}),
         }
 
+class FriendRequestForm(forms.ModelForm):
+    class Meta:
+        model = FriendRequest
+        fields = ['to_user']
 

@@ -1,0 +1,16 @@
+<!-- templates/friends_list.html -->
+
+{% extends 'shared/matrimonybase.html' %}
+
+{% block content %}
+<h2>Friends List</h2>
+{% if friends %}
+    <ul>
+        {% for friend in friends %}
+        <li>{{ friend.username }}</li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No friends found.</p>
+{% endif %}
+{% endblock %}

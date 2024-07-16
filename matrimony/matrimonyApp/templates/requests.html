@@ -1,0 +1,33 @@
+<!-- templates/requests.html -->
+
+{% extends 'shared/matrimonybase.html' %}
+
+{% block content %}
+<h2>Received Requests</h2>
+{% if received_requests %}
+    <ul>
+        {% for request in received_requests %}
+        <li>
+            {{ request.from_user.username }}
+            <a href="{% url 'matrimonyApp:respond_to_request' request.id 'accept' %}">Accept</a> | 
+            <a href="{% url 'matrimonyApp:respond_to_request' request.id 'reject' %}">Reject</a>
+        </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No received requests.</p>
+{% endif %}
+
+<h2>Sent Requests</h2>
+{% if sent_requests %}
+    <ul>
+        {% for request in sent_requests %}
+        <li>
+            {{ request.to_user.username }} - {{ request.status }}
+        </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No sent requests.</p>
+{% endif %}
+{% endblock %}
