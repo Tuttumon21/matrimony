@@ -96,3 +96,14 @@ class FriendRequest(models.Model):
 
     def __str__(self):
         return f"{self.from_user} -> {self.to_user}: {self.status}"
+
+class ProfileExclusion(models.Model):
+    user = models.ForeignKey(User, related_name='exclusions', on_delete=models.CASCADE)
+    excluded_profile = models.ForeignKey(User, related_name='excluded_by', on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'excluded_profile')
+
+    def __str__(self):
+        return f"{self.user} excluded {self.excluded_profile}"

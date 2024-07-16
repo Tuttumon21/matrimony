@@ -2,14 +2,16 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import TemplateView,FormView
 from .forms import ParentsDetailsForm,PartnerPreferenceForm,FriendRequestForm
 from django.contrib.auth.decorators import login_required
-from .models import ParentsDetails,PartnerPreference,FriendRequest
+from .models import ParentsDetails,PartnerPreference,FriendRequest,ProfileExclusion
 from django.contrib.auth.mixins import LoginRequiredMixin
 from accounts.models import User
 from django.db.models import Q
 from django.views import View
+from django.urls import reverse
 # from django.utils.decorators import method_decorator
 # from django.urls import reverse_lazy
-from django.http import JsonResponse
+# from django.http import JsonResponse
+
 # Create your views here.
 
 
@@ -64,19 +66,28 @@ class SuggestionView(LoginRequiredMixin, TemplateView):
 
         try:
             partner_preference = user.partner_preference
+
+            accepted_friend_requests = FriendRequest.objects.filter(
+                from_user=user, status='accepted'
+            ).values_list('to_user', flat=True)
+
+            exclusions = ProfileExclusion.objects.filter(
+                user=user
+            ).values_list('excluded_profile', flat=True)
+
             profiles = User.objects.filter(
                 age__gte=partner_preference.age_min,
                 age__lte=partner_preference.age_max,
-                parents_details__caste=partner_preference.caste,
-                parents_details__religion=partner_preference.religion,
-                parents_details__height__gte=partner_preference.height_min,
-                parents_details__height__lte=partner_preference.height_max,
-                parents_details__weight__gte=partner_preference.weight_min,
-                parents_details__weight__lte=partner_preference.weight_max,
-                parents_details__annual_income__gte=partner_preference.income_min,
-                parents_details__annual_income__lte=partner_preference.income_max,
-                education_level=partner_preference.qualification
-            ).exclude(id=user.id).select_related('partner_preference').prefetch_related('parents_details')
+                # parents_details__caste=partner_preference.caste,
+                # parents_details__religion=partner_preference.religion,
+                # parents_details__height__gte=partner_preference.height_min,
+                # parents_details__height__lte=partner_preference.height_max,
+                # parents_details__weight__gte=partner_preference.weight_min,
+                # parents_details__weight__lte=partner_preference.weight_max,
+                # parents_details__annual_income__gte=partner_preference.income_min,
+                # parents_details__annual_income__lte=partner_preference.income_max,
+                # education_level=partner_preference.qualification
+            ).exclude(id=user.id).exclude(id__in=accepted_friend_requests).exclude(id__in=exclusions).select_related('partner_preference').prefetch_related('parents_details')
             context['profiles'] = profiles
         except PartnerPreference.DoesNotExist:
             profiles = User.objects.none()
@@ -136,3 +147,9 @@ def friends_list(request):
     }
     
     return render(request, 'friends_list.html', context)
+
+class ExcludeProfileView(LoginRequiredMixin, View):
+    def post(self, request, profile_id):
+        profile = get_object_or_404(User, id=profile_id)
+        exclusion, created = ProfileExclusion.objects.get_or_create(user=request.user, excluded_profile=profile)
+        return redirect('matrimonyApp:suggestions')

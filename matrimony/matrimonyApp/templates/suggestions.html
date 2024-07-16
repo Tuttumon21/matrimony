@@ -49,6 +49,10 @@
                                     {% csrf_token %}
                                     <button type="submit" class="btn btn-outline-dark mt-2">Send Request</button>
                                 </form>
+                                <form method="post" action="{% url 'matrimonyApp:exclude_profile' profile.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger">Don't Show Again</button>
+                                </form>
                             </div>
                         </div>
                     </div>

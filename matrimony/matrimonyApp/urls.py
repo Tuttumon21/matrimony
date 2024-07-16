@@ -12,6 +12,8 @@ urlpatterns = [
 
     path('suggestions/',SuggestionView.as_view(), name='suggestions'),
 
+    path('exclude_profile/<int:profile_id>/', ExcludeProfileView.as_view(), name='exclude_profile'),
+
 
     path('send_request/<int:profile_id>/', views.send_request, name='send_request'),
     
