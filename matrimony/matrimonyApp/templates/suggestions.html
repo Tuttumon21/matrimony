@@ -51,7 +51,7 @@
                                 </form>
                                 <form method="post" action="{% url 'matrimonyApp:exclude_profile' profile.id %}">
                                     {% csrf_token %}
-                                    <button type="submit" class="btn btn-danger">Don't Show Again</button>
+                                    <button type="submit" class="btn btn-outline-dark mt-2">Don't Show</button>
                                 </form>
                             </div>
                         </div>
