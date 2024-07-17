@@ -19,7 +19,7 @@ urlpatterns = [
     
     path('respond_to_request/<int:request_id>/<str:action>/', views.respond_to_request, name='respond_to_request'),
     path('view_requests/', views.view_requests, name='view_requests'),
-
-    path('friends_list/', views.friends_list, name='friends_list'),
+    path('unfriend/<int:user_id>/', views.unfriend, name='unfriend'),
+    path('friends_list/', FriendsListView.as_view(), name='friends_list'),
 
 ]

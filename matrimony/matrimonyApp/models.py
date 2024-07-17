@@ -96,6 +96,10 @@ class FriendRequest(models.Model):
 
     def __str__(self):
         return f"{self.from_user} -> {self.to_user}: {self.status}"
+    
+    def unfriend(self):
+        if self.status == 'accepted':
+            self.delete()
 
 class ProfileExclusion(models.Model):
     user = models.ForeignKey(User, related_name='exclusions', on_delete=models.CASCADE)
@@ -107,3 +111,5 @@ class ProfileExclusion(models.Model):
 
     def __str__(self):
         return f"{self.user} excluded {self.excluded_profile}"
+    
+    

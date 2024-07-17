@@ -1,16 +1,16 @@
 <!-- templates/friends_list.html -->
-
 {% extends 'shared/matrimonybase.html' %}
-
 {% block content %}
-<h2>Friends List</h2>
-{% if friends %}
-    <ul>
-        {% for friend in friends %}
-        <li>{{ friend.username }}</li>
-        {% endfor %}
-    </ul>
-{% else %}
-    <p>No friends found.</p>
-{% endif %}
+<h1>Your Friends</h1>
+<ul>
+    {% for friend in friends %}
+    <li>
+        {{ friend.to_user.get_full_name }}
+        <form action="{% url 'matrimonyApp:unfriend' friend.to_user.id %}" method="post" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Unfriend</button>
+        </form>
+    </li>
+    {% endfor %}
+</ul>
 {% endblock %}

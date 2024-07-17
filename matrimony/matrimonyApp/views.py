@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.views.generic import TemplateView,FormView
+from django.views.generic import TemplateView,FormView,ListView
 from .forms import ParentsDetailsForm,PartnerPreferenceForm,FriendRequestForm
 from django.contrib.auth.decorators import login_required
 from .models import ParentsDetails,PartnerPreference,FriendRequest,ProfileExclusion
@@ -8,6 +8,7 @@ from accounts.models import User
 from django.db.models import Q
 from django.views import View
 from django.urls import reverse
+from django.views.generic import ListView
 # from django.utils.decorators import method_decorator
 # from django.urls import reverse_lazy
 # from django.http import JsonResponse
@@ -66,33 +67,66 @@ class SuggestionView(LoginRequiredMixin, TemplateView):
 
         try:
             partner_preference = user.partner_preference
-
-            accepted_friend_requests = FriendRequest.objects.filter(
-                from_user=user, status='accepted'
-            ).values_list('to_user', flat=True)
-
-            exclusions = ProfileExclusion.objects.filter(
-                user=user
-            ).values_list('excluded_profile', flat=True)
-
+            friends = FriendRequest.objects.filter(
+                Q(from_user=user) | Q(to_user=user),
+                status='accepted'
+            ).values_list('from_user', 'to_user')
+            friend_ids = [item for sublist in friends for item in sublist if item != user.id]
             profiles = User.objects.filter(
                 age__gte=partner_preference.age_min,
                 age__lte=partner_preference.age_max,
-                # parents_details__caste=partner_preference.caste,
-                # parents_details__religion=partner_preference.religion,
-                # parents_details__height__gte=partner_preference.height_min,
-                # parents_details__height__lte=partner_preference.height_max,
-                # parents_details__weight__gte=partner_preference.weight_min,
-                # parents_details__weight__lte=partner_preference.weight_max,
-                # parents_details__annual_income__gte=partner_preference.income_min,
-                # parents_details__annual_income__lte=partner_preference.income_max,
-                # education_level=partner_preference.qualification
-            ).exclude(id=user.id).exclude(id__in=accepted_friend_requests).exclude(id__in=exclusions).select_related('partner_preference').prefetch_related('parents_details')
+                parents_details__caste=partner_preference.caste,
+                parents_details__religion=partner_preference.religion,
+                parents_details__height__gte=partner_preference.height_min,
+                parents_details__height__lte=partner_preference.height_max,
+                parents_details__weight__gte=partner_preference.weight_min,
+                parents_details__weight__lte=partner_preference.weight_max,
+                parents_details__annual_income__gte=partner_preference.income_min,
+                parents_details__annual_income__lte=partner_preference.income_max,
+                education_level=partner_preference.qualification
+            ).exclude(id__in=friend_ids).exclude(id=user.id).select_related('partner_preference').prefetch_related('parents_details')
             context['profiles'] = profiles
         except PartnerPreference.DoesNotExist:
-            profiles = User.objects.none()
+            context['profiles'] = User.objects.none()
 
         return context
+
+# class SuggestionView(LoginRequiredMixin, TemplateView):
+#     template_name = 'suggestions.html'
+
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         user = self.request.user
+
+#         try:
+#             partner_preference = user.partner_preference
+
+#             accepted_friend_requests = FriendRequest.objects.filter(
+#                 from_user=user, status='accepted'
+#             ).values_list('to_user', flat=True)
+
+#             exclusions = ProfileExclusion.objects.filter(
+#                 user=user
+#             ).values_list('excluded_profile', flat=True)
+
+#             profiles = User.objects.filter(
+#                 age__gte=partner_preference.age_min,
+#                 age__lte=partner_preference.age_max,
+#                 # parents_details__caste=partner_preference.caste,
+#                 # parents_details__religion=partner_preference.religion,
+#                 # parents_details__height__gte=partner_preference.height_min,
+#                 # parents_details__height__lte=partner_preference.height_max,
+#                 # parents_details__weight__gte=partner_preference.weight_min,
+#                 # parents_details__weight__lte=partner_preference.weight_max,
+#                 # parents_details__annual_income__gte=partner_preference.income_min,
+#                 # parents_details__annual_income__lte=partner_preference.income_max,
+#                 # education_level=partner_preference.qualification
+#             ).exclude(id=user.id).exclude(id__in=accepted_friend_requests).exclude(id__in=exclusions).select_related('partner_preference').prefetch_related('parents_details')
+#             context['profiles'] = profiles
+#         except PartnerPreference.DoesNotExist:
+#             profiles = User.objects.none()
+
+#         return context
 
 @login_required
 def send_request(request, profile_id):
@@ -127,26 +161,41 @@ def view_requests(request):
     
     return render(request, 'requests.html', context)
 
+class FriendsListView(LoginRequiredMixin, ListView):
+    template_name = 'friends_list.html'
+    context_object_name = 'friends'
+
+    def get_queryset(self):
+        return FriendRequest.objects.filter(
+            Q(from_user=self.request.user) | Q(to_user=self.request.user),
+            status='accepted'
+        ).select_related('from_user', 'to_user')
+# @login_required
+# def friends_list(request):
+#     # Fetch accepted friend requests where the current user is either the sender or receiver
+#     accepted_requests = FriendRequest.objects.filter(status='accepted').filter(
+#         (Q(from_user=request.user) | Q(to_user=request.user))
+#     )
+    
+#     # Extract friends from accepted friend requests
+#     friends = []
+#     for req in accepted_requests:
+#         if req.from_user == request.user:
+#             friends.append(req.to_user)
+#         else:
+#             friends.append(req.from_user)
+    
+#     context = {
+#         'friends': friends,
+#     }
+    
+#     return render(request, 'friends_list.html', context)
+
 @login_required
-def friends_list(request):
-    # Fetch accepted friend requests where the current user is either the sender or receiver
-    accepted_requests = FriendRequest.objects.filter(status='accepted').filter(
-        (Q(from_user=request.user) | Q(to_user=request.user))
-    )
-    
-    # Extract friends from accepted friend requests
-    friends = []
-    for req in accepted_requests:
-        if req.from_user == request.user:
-            friends.append(req.to_user)
-        else:
-            friends.append(req.from_user)
-    
-    context = {
-        'friends': friends,
-    }
-    
-    return render(request, 'friends_list.html', context)
+def unfriend(request, user_id):
+    friend_request = get_object_or_404(FriendRequest, from_user=request.user, to_user__id=user_id, status='accepted')
+    friend_request.unfriend()
+    return redirect('matrimonyApp:friends_list')  # Redirect to your friends list page
 
 class ExcludeProfileView(LoginRequiredMixin, View):
     def post(self, request, profile_id):
