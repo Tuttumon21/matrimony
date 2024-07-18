@@ -5,11 +5,20 @@
 <ul>
     {% for friend in friends %}
     <li>
+        {% if friend.from_user == request.user %}
         {{ friend.to_user.get_full_name }}
         <form action="{% url 'matrimonyApp:unfriend' friend.to_user.id %}" method="post" style="display:inline;">
             {% csrf_token %}
             <button type="submit" class="btn btn-danger">Unfriend</button>
         </form>
+        {% else %}
+        {{ friend.from_user.get_full_name }}
+        <form action="{% url 'matrimonyApp:unfriend' friend.to_user.id %}" method="post" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Unfriend</button>
+        </form>
+        {% endif %}
+
     </li>
     {% endfor %}
 </ul>

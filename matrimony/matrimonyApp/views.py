@@ -202,3 +202,4 @@ class ExcludeProfileView(LoginRequiredMixin, View):
         profile = get_object_or_404(User, id=profile_id)
         exclusion, created = ProfileExclusion.objects.get_or_create(user=request.user, excluded_profile=profile)
         return redirect('matrimonyApp:suggestions')
+
