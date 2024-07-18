@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import TemplateView,FormView,ListView
-from .forms import ParentsDetailsForm,PartnerPreferenceForm,FriendRequestForm
+from .forms import ParentsDetailsForm,PartnerPreferenceForm,FriendRequestForm,MessageForm
 from django.contrib.auth.decorators import login_required
-from .models import ParentsDetails,PartnerPreference,FriendRequest,ProfileExclusion
+from .models import ParentsDetails,PartnerPreference,FriendRequest,ProfileExclusion,Message
 from django.contrib.auth.mixins import LoginRequiredMixin
 from accounts.models import User
 from django.db.models import Q
@@ -203,3 +203,32 @@ class ExcludeProfileView(LoginRequiredMixin, View):
         exclusion, created = ProfileExclusion.objects.get_or_create(user=request.user, excluded_profile=profile)
         return redirect('matrimonyApp:suggestions')
 
+@login_required
+def send_message(request, recipient_id):
+    recipient = get_object_or_404(User, id=recipient_id)
+    if request.method == 'POST':
+        form = MessageForm(request.POST)
+        if form.is_valid():
+            message = form.save(commit=False)
+            message.sender = request.user
+            message.recipient = recipient
+            message.save()
+            return redirect('matrimonyApp:chat_room', friend_id=recipient.id)
+    else:
+        form = MessageForm(initial={'recipient': recipient})
+    return render(request, 'send_message.html', {'form': form, 'recipient': recipient})
+
+@login_required
+def chat_room(request, friend_id):
+    friend = get_object_or_404(User, id=friend_id)
+    messages = Message.objects.filter(
+        Q(sender=request.user, recipient=friend) | Q(sender=friend, recipient=request.user)
+    ).order_by('timestamp')
+
+    if request.method == 'POST':
+        body = request.POST.get('body')
+        if body:
+            Message.objects.create(sender=request.user, recipient=friend, body=body)
+            return redirect('matrimonyApp:chat_room', friend_id=friend.id)
+
+    return render(request, 'chat_room.html', {'friend': friend, 'messages': messages})

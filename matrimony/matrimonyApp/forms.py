@@ -1,6 +1,6 @@
 from django import forms
 from django.forms import Form,IntegerField
-from .models import ParentsDetails, PartnerPreference,FriendRequest
+from .models import ParentsDetails, PartnerPreference,FriendRequest,Message
 
 
 
@@ -65,3 +65,10 @@ class FriendRequestForm(forms.ModelForm):
         model = FriendRequest
         fields = ['to_user']
 
+class MessageForm(forms.ModelForm):
+    class Meta:
+        model = Message
+        fields = ['body']
+        widgets = {
+            'body': forms.Textarea(attrs={'rows': 2, 'placeholder': 'Type your message here...'}),
+        }

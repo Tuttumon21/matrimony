@@ -22,4 +22,6 @@ urlpatterns = [
     path('unfriend/<int:user_id>/', views.unfriend, name='unfriend'),
     path('friends_list/', FriendsListView.as_view(), name='friends_list'),
 
+ path('send_message/<int:recipient_id>/', send_message, name='send_message'),
+    path('chat/<int:friend_id>/', chat_room, name='chat_room'),
 ]

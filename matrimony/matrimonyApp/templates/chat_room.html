@@ -1,0 +1,17 @@
+<!-- templates/chat_room.html -->
+{% extends 'shared/matrimonybase.html' %}
+{% block content %}
+<h2>Chat with {{ friend.get_full_name }}</h2>
+<div id="chat-box">
+    {% for message in messages %}
+    <div class="message">
+        <strong>{{ message.sender.get_full_name }}:</strong> {{ message.body }}
+    </div>
+    {% endfor %}
+</div>
+<form method="post">
+    {% csrf_token %}
+    <textarea name="body" placeholder="type message here"></textarea>
+    <button type="submit" class="btn btn-outline-primary">Send</button>
+</form>
+{% endblock %}

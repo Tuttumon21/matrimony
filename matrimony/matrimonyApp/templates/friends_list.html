@@ -11,14 +11,15 @@
             {% csrf_token %}
             <button type="submit" class="btn btn-danger">Unfriend</button>
         </form>
+        <a href="{% url 'matrimonyApp:chat_room' friend.to_user.id %}" class="btn btn-primary">Chat</a>
         {% else %}
         {{ friend.from_user.get_full_name }}
-        <form action="{% url 'matrimonyApp:unfriend' friend.to_user.id %}" method="post" style="display:inline;">
+        <form action="{% url 'matrimonyApp:unfriend' friend.from_user.id %}" method="post" style="display:inline;">
             {% csrf_token %}
             <button type="submit" class="btn btn-danger">Unfriend</button>
         </form>
+        <a href="{% url 'matrimonyApp:chat_room' friend.from_user.id %}" class="btn btn-primary">Chat</a>
         {% endif %}
-
     </li>
     {% endfor %}
 </ul>
