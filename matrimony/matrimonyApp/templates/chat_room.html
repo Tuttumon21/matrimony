@@ -1,17 +1,68 @@
 <!-- templates/chat_room.html -->
 {% extends 'shared/matrimonybase.html' %}
 {% block content %}
+<style>
+    .chat-container {
+        display: flex;
+        flex-direction: column;
+        height: 80vh;
+    }
+    #chat-box {
+        flex: 1;
+        overflow-y: auto;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        margin-bottom: 10px;
+        background-color: #f9f9f9;
+    }
+    .message {
+        margin-bottom: 10px;
+        padding: 10px;
+        border-radius: 10px;
+        max-width: 60%;
+        word-wrap: break-word;
+    }
+    .message.sent {
+        background-color: #007bff;
+        color: white;
+        align-self: flex-end;
+        text-align: right;
+    }
+    .message.received {
+        background-color: #e1e1e1;
+        align-self: flex-start;
+    }
+    .chat-input-container {
+        display: flex;
+        align-items: center;
+    }
+    .chat-input-container textarea {
+        flex: 1;
+        resize: none;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin-right: 10px;
+    }
+    .chat-input-container button {
+        padding: 10px 20px;
+    }
+</style>
+
 <h2>Chat with {{ friend.get_full_name }}</h2>
-<div id="chat-box">
-    {% for message in messages %}
-    <div class="message">
-        <strong>{{ message.sender.get_full_name }}:</strong> {{ message.body }}
+<div class="chat-container">
+    <div id="chat-box">
+        {% for message in messages %}
+        <div class="message {% if message.sender == request.user %}sent{% else %}received{% endif %}">
+            <strong>{{ message.sender.get_full_name }}:</strong> {{ message.body }}
+        </div>
+        {% endfor %}
     </div>
-    {% endfor %}
+    <form method="post" class="chat-input-container">
+        {% csrf_token %}
+        <textarea name="body" placeholder="Type your message here" rows="3" required></textarea>
+        <button type="submit" class="btn btn-outline-primary">Send</button>
+    </form>
 </div>
-<form method="post">
-    {% csrf_token %}
-    <textarea name="body" placeholder="type message here"></textarea>
-    <button type="submit" class="btn btn-outline-primary">Send</button>
-</form>
 {% endblock %}

@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from .models import ParentsDetails,PartnerPreference,FriendRequest,ProfileExclusion,Message
 from django.contrib.auth.mixins import LoginRequiredMixin
 from accounts.models import User
-from django.db.models import Q
+from django.db.models import Q,Max
 from django.views import View
 from django.urls import reverse
 from django.views.generic import ListView
@@ -224,6 +224,11 @@ def chat_room(request, friend_id):
     messages = Message.objects.filter(
         Q(sender=request.user, recipient=friend) | Q(sender=friend, recipient=request.user)
     ).order_by('timestamp')
+    
+    user = request.user
+    friends = FriendRequest.objects.filter(
+        Q(from_user=user, status='accepted') | Q(to_user=user, status='accepted')
+    )
 
     if request.method == 'POST':
         body = request.POST.get('body')
@@ -231,4 +236,32 @@ def chat_room(request, friend_id):
             Message.objects.create(sender=request.user, recipient=friend, body=body)
             return redirect('matrimonyApp:chat_room', friend_id=friend.id)
 
-    return render(request, 'chat_room.html', {'friend': friend, 'messages': messages})
+    return render(request, 'chat_room.html', {'friend': friend, 'messages': messages, 'friends': friends})
+
+def chat_with_friends(request, room_name=None):
+    user = request.user
+    friends = FriendRequest.objects.filter(
+        Q(from_user=user, status='accepted') | Q(to_user=user, status='accepted')
+    )
+
+    # Sorting friends by the most recent message
+    friends_with_last_message = friends.annotate(
+        last_message_time=Max('to_user__received_messages__timestamp')
+    ).order_by('-last_message_time')
+
+    # Get the friend object based on the room_name
+    friend = None
+    messages = []
+    if room_name:
+        friend = get_object_or_404(User, username=room_name)
+        messages = Message.objects.filter(
+            (Q(sender=user) & Q(recipient=friend)) |
+            (Q(sender=friend) & Q(recipient=user))
+        ).order_by('timestamp')
+
+    return render(request, 'chat_with_friends.html', {
+        'friends': friends_with_last_message,
+        'friend': friend,
+        'messages': messages,
+    })
+
