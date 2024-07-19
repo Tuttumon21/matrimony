@@ -258,6 +258,11 @@ def chat_with_friends(request, room_name=None):
             (Q(sender=user) & Q(recipient=friend)) |
             (Q(sender=friend) & Q(recipient=user))
         ).order_by('timestamp')
+    
+    if request.method == 'POST':
+        body = request.POST.get('body')
+        if body:
+            Message.objects.create(sender=request.user, recipient=friend, body=body)
 
     return render(request, 'chat_with_friends.html', {
         'friends': friends_with_last_message,
