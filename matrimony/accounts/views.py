@@ -82,7 +82,7 @@ class ProfileView(LoginRequiredMixin, TemplateView):
         return context
 
 class ProfileUpdateView(LoginRequiredMixin, FormView):
-    model = User
+    # model = User
     form_class = ProfileUpdateForm
     template_name = 'accounts/profile_update.html'
     success_url = reverse_lazy('accounts:profile')
@@ -90,7 +90,7 @@ class ProfileUpdateView(LoginRequiredMixin, FormView):
     def get_form(self, form_class=None):
         if form_class is None:
             form_class = self.get_form_class()
-        return form_class(instance=self.request.user, **self.get_form_kwargs())
+        return form_class(instance=self.request.user, **self.get_form_kwargs())  
     
     def form_valid(self, form):
         form.save()

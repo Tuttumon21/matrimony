@@ -62,9 +62,6 @@ class RegistrationForm(ModelForm):
             raise forms.ValidationError('A user with that email already exists.')
         return email
 
-class ProfileUpdateForm(RegistrationForm):
-    password = None
-    confirm_password = None
 
 class BasicInfoForm(forms.ModelForm):
     class Meta:
@@ -164,3 +161,25 @@ class RelationshipTypeForm(forms.ModelForm):
         widgets = {
             'relationship_type': forms.Select(attrs={'class':'form-control', 'required': 'true'}),
         }
+
+
+class ProfileUpdateForm(BasicInfoForm):
+    # profile_pic = None
+    confirm_password= None
+    password = None
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'email', 'phone_number', 'date_of_birth', 'gender', 'education_level', 'profile_pic']
+        
+
+    def __init__(self, *args, **kwargs):
+        super(ProfileUpdateForm, self).__init__(*args, **kwargs)
+        if self.instance and self.instance.profile_pic:
+            self.fields['profile_pic'].widget.attrs['value'] = self.instance.profile_pic.url
+            self.fields['profile_pic'].required = False
+
+    def clean_profile_pic(self):
+        pic = self.cleaned_data.get('profile_pic', False)
+        if not pic and self.instance and self.instance.profile_pic:
+            return self.instance.profile_pic
+        return pic
