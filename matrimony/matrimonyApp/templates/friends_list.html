@@ -2,23 +2,35 @@
 {% extends 'shared/matrimonybase.html' %}
 {% block content %}
 <h1>Your Friends</h1>
-<ul>
+<ul style="list-style: none; padding: 0;">
     {% for friend in friends %}
-    <li>
+    <li style="display: flex; align-items: center; justify-content: space-between; padding: 10px; border-bottom: 1px solid #ddd;">
         {% if friend.from_user == request.user %}
-        {{ friend.to_user.get_full_name }}
-        <form action="{% url 'matrimonyApp:unfriend' friend.to_user.id %}" method="post" style="display:inline;">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-danger">Unfriend</button>
-        </form>
-        <a href="{% url 'matrimonyApp:chat_room' friend.to_user.id %}" class="btn btn-primary">Chat</a>
+        <div style="display: flex; align-items: center; max-width: auto;">
+            <img src="{{ friend.to_user.profile_pic.url }}" alt="{{ friend.to_user.get_full_name }}'s profile image" style="border-radius: 50%; width: 40px; height: 40px; margin-right: 10px;">
+            <span>{{ friend.to_user.get_full_name }}</span>
+        </div>
+        <div>
+            <form action="{% url 'matrimonyApp:unfriend' friend.to_user.id %}" method="post" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">Unfriend</button>
+            </form>
+            <a href="{% url 'matrimonyApp:chat_room' friend.to_user.id %}" class="btn btn-primary">Chat</a>
+            <a href="#" class="btn btn-secondary">View Full Profile</a>
+        </div>
         {% else %}
-        {{ friend.from_user.get_full_name }}
-        <form action="{% url 'matrimonyApp:unfriend' friend.from_user.id %}" method="post" style="display:inline;">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-danger">Unfriend</button>
-        </form>
-        <a href="{% url 'matrimonyApp:chat_room' friend.from_user.id %}" class="btn btn-primary">Chat</a>
+        <div style="display: flex; align-items: center; max-width: auto;">
+            <img src="{{ friend.from_user.profile_pic.url }}" alt="{{ friend.from_user.get_full_name }}'s profile image" style="border-radius: 50%; width: 40px; height: 40px; margin-right: 10px;">
+            <span>{{ friend.from_user.get_full_name }}</span>
+        </div>
+        <div>
+            <form action="{% url 'matrimonyApp:unfriend' friend.from_user.id %}" method="post" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">Unfriend</button>
+            </form>
+            <a href="{% url 'matrimonyApp:chat_room' friend.from_user.id %}" class="btn btn-primary">Chat</a>
+            <a href="#" class="btn btn-secondary">View Full Profile</a>
+        </div>
         {% endif %}
     </li>
     {% endfor %}

@@ -16,7 +16,8 @@
         margin-top: 0;
     }
     .friends-list a {
-        display: block;
+        display: flex;
+        align-items: center;
         padding: 10px;
         border-radius: 5px;
         text-decoration: none;
@@ -26,6 +27,12 @@
     }
     .friends-list a:hover {
         background-color: #e9e9e9;
+    }
+    .friends-list img {
+        border-radius: 50%;
+        margin-right: 10px;
+        width: 40px;
+        height: 40px;
     }
     .chat-container {
         justify-content: center;
@@ -83,23 +90,25 @@
 <div class="chat-page">
     <div class="friends-list">
         <h3>Your Friends</h3>
-        <ul>
+        <!-- <ul> -->
             {% for friend in friends %}
                 {% if friend.from_user == request.user %}
-                <li>
+                <!-- <li> -->
                     <a href="{% url 'matrimonyApp:chat_with_friends' room_name=friend.to_user.username %}">
+                        <img src="{{ friend.to_user.profile_pic.url }}" alt="{{ friend.to_user.get_full_name }}'s profile image">
                         {{ friend.to_user.get_full_name }}
                     </a>
-                </li>
+                <!-- </li> -->
                 {% else %}
-                <li>
+                <!-- <li> -->
                     <a href="{% url 'matrimonyApp:chat_with_friends' room_name=friend.from_user.username %}">
+                        <img src="{{ friend.from_user.profile_pic.url }}" alt="{{ friend.from_user.get_full_name }}'s profile image">
                         {{ friend.from_user.get_full_name }}
                     </a>
-                </li>
+                <!-- </li> -->
                 {% endif %}
             {% endfor %}
-        </ul>
+        <!-- </ul> -->
     </div>
     <div class="chat-container">
         {% if friend %}
