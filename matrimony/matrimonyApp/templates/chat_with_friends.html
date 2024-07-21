@@ -28,6 +28,7 @@
         background-color: #e9e9e9;
     }
     .chat-container {
+        justify-content: center;
         display: flex;
         flex-direction: column;
         flex: 1;
@@ -74,6 +75,9 @@
     .chat-input-container button {
         padding: 10px 20px;
     }
+    .text {
+        font-size: xx-large;
+    }
 </style>
 
 <div class="chat-page">
@@ -113,7 +117,7 @@
             <button type="submit" class="btn btn-outline-primary">Send</button>
         </form>
         {% else %}
-        <p>Select a friend to start chatting.</p>
+        <p class="text text-center">Select a friend to start chatting.</p>
         {% endif %}
     </div>
 </div>
