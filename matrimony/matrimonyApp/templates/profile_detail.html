@@ -1,0 +1,19 @@
+<!-- templates/profile_detail.html -->
+{% extends 'shared/matrimonybase.html' %}
+{% block content %}
+<h1>{{ profile.get_full_name }}'s Profile</h1>
+<div class="profile-details">
+    {% if profile.profile_pic %}
+    <img src="{{ profile.profile_pic.url }}" alt="{{ profile.get_full_name }}'s profile image" style="width: 150px; height: 150px; object-fit: cover;">
+    {% endif %}
+    <p><strong>Age:</strong> {{ profile.age }}</p>
+    <p><strong>Gender:</strong> {{ profile.gender }}</p>
+    <p><strong>Location:</strong> {{ profile.parents_details.district }}</p>
+    <p><strong>Caste:</strong> {{ profile.parents_details.caste }}</p>
+    <p><strong>Religion:</strong> {{ profile.parents_details.religion }}</p>
+    <p><strong>Height:</strong> {{ profile.parents_details.height }} cm</p>
+    <p><strong>Weight:</strong> {{ profile.parents_details.weight }} kg</p>
+    <p><strong>Income:</strong> {{ profile.parents_details.annual_income }}</p>
+    <p><strong>Education:</strong> {{ profile.education_level }}</p>
+</div>
+{% endblock %}

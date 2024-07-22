@@ -16,7 +16,7 @@
                 <button type="submit" class="btn btn-danger">Unfriend</button>
             </form>
             <a href="{% url 'matrimonyApp:chat_room' friend.to_user.id %}" class="btn btn-primary">Chat</a>
-            <a href="#" class="btn btn-secondary">View Full Profile</a>
+            <a href="{% url 'matrimonyApp:profile_detail' profile_id=friend.to_user.id %}" class="btn btn-secondary">View Full Profile</a>
         </div>
         {% else %}
         <div style="display: flex; align-items: center; max-width: auto;">
@@ -29,7 +29,7 @@
                 <button type="submit" class="btn btn-danger">Unfriend</button>
             </form>
             <a href="{% url 'matrimonyApp:chat_room' friend.from_user.id %}" class="btn btn-primary">Chat</a>
-            <a href="#" class="btn btn-secondary">View Full Profile</a>
+            <a href="{% url 'matrimonyApp:profile_detail' profile_id=friend.from_user.id %}" class="btn btn-secondary">View Full Profile</a>
         </div>
         {% endif %}
     </li>

@@ -225,3 +225,12 @@ def chat_with_friends(request, room_name=None):
         'messages': messages,
     })
 
+class ProfileDetailView(LoginRequiredMixin, TemplateView):
+    template_name = 'profile_detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        profile_id = self.kwargs.get('profile_id')
+        profile = get_object_or_404(User, id=profile_id)
+        context['profile'] = profile
+        return context
