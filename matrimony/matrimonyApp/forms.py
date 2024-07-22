@@ -17,6 +17,7 @@ class ParentsDetailsForm(forms.ModelForm):
             'height', 'weight',
             'caste', 'religion',
             'zodiac_sign', 'horoscope',
+            'interested_gender',
         ]
         widgets = {
             'father_name': forms.TextInput(attrs={'class': 'form-control', 'required': 'true'}),
@@ -36,6 +37,7 @@ class ParentsDetailsForm(forms.ModelForm):
             'religion': forms.Select(attrs={'class': 'form-control', 'required': 'true', 'placeholder': 'Select'}),
             'zodiac_sign': forms.Select(attrs={'class': 'form-control', 'required': 'true', 'placeholder': 'Select'}),
             'horoscope': forms.FileInput(attrs={'class': 'form-control', 'required': 'true'}),
+            'interested_gender': forms.Select(attrs={'class': 'form-control', 'required': 'true', 'placeholder': 'Select'}),
         }
 
 class PartnerPreferenceForm(forms.ModelForm):

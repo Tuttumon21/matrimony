@@ -50,6 +50,7 @@ class ParentsDetails(models.Model):
     ('Leo', 'Leo'), ('Virgo', 'Virgo'), ('Libra', 'Libra'),('Scorpio', 'Scorpio'),('Sagittarius', 'Sagittarius'),('Capricorn','Capricorn'),
     ('Aquarius', 'Aquarius'),('Pisces', 'Pisces')])
     horoscope = models.FileField(upload_to='horoscopes/')
+    interested_gender = models.CharField(max_length=6, choices=[('MALE', 'Male'),('FEMALE', 'Female'),('BOTH', 'Both')], default='BOTH')
 
 class PartnerPreference(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='partner_preference')

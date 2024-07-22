@@ -61,17 +61,28 @@ def partner_preference_view(request):
 class SuggestionView(LoginRequiredMixin, TemplateView):
     template_name = 'suggestions.html'
 
+    def get_gender_filter(self, interested_gender):
+        if interested_gender == 'MALE':
+            return Q(gender='MALE')
+        elif interested_gender == 'FEMALE':
+            return Q(gender='FEMALE')
+        else:
+            return Q(gender__in=['MALE', 'FEMALE'])
+        
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         user = self.request.user
 
         try:
             partner_preference = user.partner_preference
+            interested_gender = user.parents_details.interested_gender
+            print(interested_gender)
             friends = FriendRequest.objects.filter(
                 Q(from_user=user) | Q(to_user=user),
                 status='accepted'
             ).values_list('from_user', 'to_user')
             friend_ids = [item for sublist in friends for item in sublist if item != user.id]
+            gender_filter = self.get_gender_filter(interested_gender)
             profiles = User.objects.filter(
                 age__gte=partner_preference.age_min,
                 age__lte=partner_preference.age_max,
@@ -84,49 +95,12 @@ class SuggestionView(LoginRequiredMixin, TemplateView):
                 parents_details__annual_income__gte=partner_preference.income_min,
                 parents_details__annual_income__lte=partner_preference.income_max,
                 education_level=partner_preference.qualification
-            ).exclude(id__in=friend_ids).exclude(id=user.id).select_related('partner_preference').prefetch_related('parents_details')
+            ).filter(gender_filter).exclude(id__in=friend_ids).exclude(id=user.id).select_related('partner_preference').prefetch_related('parents_details')
             context['profiles'] = profiles
         except PartnerPreference.DoesNotExist:
             context['profiles'] = User.objects.none()
 
         return context
-
-# class SuggestionView(LoginRequiredMixin, TemplateView):
-#     template_name = 'suggestions.html'
-
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         user = self.request.user
-
-#         try:
-#             partner_preference = user.partner_preference
-
-#             accepted_friend_requests = FriendRequest.objects.filter(
-#                 from_user=user, status='accepted'
-#             ).values_list('to_user', flat=True)
-
-#             exclusions = ProfileExclusion.objects.filter(
-#                 user=user
-#             ).values_list('excluded_profile', flat=True)
-
-#             profiles = User.objects.filter(
-#                 age__gte=partner_preference.age_min,
-#                 age__lte=partner_preference.age_max,
-#                 # parents_details__caste=partner_preference.caste,
-#                 # parents_details__religion=partner_preference.religion,
-#                 # parents_details__height__gte=partner_preference.height_min,
-#                 # parents_details__height__lte=partner_preference.height_max,
-#                 # parents_details__weight__gte=partner_preference.weight_min,
-#                 # parents_details__weight__lte=partner_preference.weight_max,
-#                 # parents_details__annual_income__gte=partner_preference.income_min,
-#                 # parents_details__annual_income__lte=partner_preference.income_max,
-#                 # education_level=partner_preference.qualification
-#             ).exclude(id=user.id).exclude(id__in=accepted_friend_requests).exclude(id__in=exclusions).select_related('partner_preference').prefetch_related('parents_details')
-#             context['profiles'] = profiles
-#         except PartnerPreference.DoesNotExist:
-#             profiles = User.objects.none()
-
-#         return context
 
 @login_required
 def send_request(request, profile_id):
@@ -170,26 +144,7 @@ class FriendsListView(LoginRequiredMixin, ListView):
             Q(from_user=self.request.user) | Q(to_user=self.request.user),
             status='accepted'
         ).select_related('from_user', 'to_user')
-# @login_required
-# def friends_list(request):
-#     # Fetch accepted friend requests where the current user is either the sender or receiver
-#     accepted_requests = FriendRequest.objects.filter(status='accepted').filter(
-#         (Q(from_user=request.user) | Q(to_user=request.user))
-#     )
-    
-#     # Extract friends from accepted friend requests
-#     friends = []
-#     for req in accepted_requests:
-#         if req.from_user == request.user:
-#             friends.append(req.to_user)
-#         else:
-#             friends.append(req.from_user)
-    
-#     context = {
-#         'friends': friends,
-#     }
-    
-#     return render(request, 'friends_list.html', context)
+
 
 @login_required
 def unfriend(request, user_id):
@@ -244,12 +199,12 @@ def chat_with_friends(request, room_name=None):
         Q(from_user=user, status='accepted') | Q(to_user=user, status='accepted')
     )
 
-    # Sorting friends by the most recent message
+    
     friends_with_last_message = friends.annotate(
         last_message_time=Max('to_user__received_messages__timestamp')
     ).order_by('-last_message_time')
 
-    # Get the friend object based on the room_name
+    
     friend = None
     messages = []
     if room_name:
