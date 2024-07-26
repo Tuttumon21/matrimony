@@ -29,4 +29,16 @@ urlpatterns = [
     path('chat/<str:room_name>/', views.chat_with_friends, name='chat_with_friends'),
 
     path('profile/<int:profile_id>/', views.ProfileDetailView.as_view(), name='profile_detail'),
+
+    path('subscription/', SubscriptionView.as_view(), name='subscription'),
+    
+
+    
+    # path('webhook/', StripeWebhookView.as_view(), name='stripe-webhook'),
+    path('webhook/',stripe_webhook,name='stripe-webhook'),
+    # path('success/', SuccessView.as_view(), name='success'),
+    path('success/<str:checkout_session_id>/', views.SuccessView.as_view(), name='success'),
+    path('cancel/', CancelView.as_view(), name='cancel'),
+
+    
 ]

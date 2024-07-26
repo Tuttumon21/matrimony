@@ -2,16 +2,23 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import TemplateView,FormView,ListView
 from .forms import ParentsDetailsForm,PartnerPreferenceForm,FriendRequestForm,MessageForm
 from django.contrib.auth.decorators import login_required
-from .models import ParentsDetails,PartnerPreference,FriendRequest,ProfileExclusion,Message
+from .models import ParentsDetails,PartnerPreference,FriendRequest,ProfileExclusion,Message,Subscription
 from django.contrib.auth.mixins import LoginRequiredMixin
 from accounts.models import User
 from django.db.models import Q,Max
 from django.views import View
 from django.urls import reverse
-from django.views.generic import ListView
+
+from django.http import JsonResponse
+import json
+import stripe
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
+from django.http import HttpResponse
+from django.conf import settings
 # from django.utils.decorators import method_decorator
 # from django.urls import reverse_lazy
-# from django.http import JsonResponse
+
 
 # Create your views here.
 
@@ -234,3 +241,62 @@ class ProfileDetailView(LoginRequiredMixin, TemplateView):
         profile = get_object_or_404(User, id=profile_id)
         context['profile'] = profile
         return context
+
+
+stripe.api_key = settings.STRIPE_SECRET_KEY
+class SubscriptionView(LoginRequiredMixin, TemplateView):
+    template_name = 'payments/subscription.html'
+
+# @method_decorator(csrf_exempt, name='dispatch')
+# class StripeWebhookView(View):
+#     def post(self, request, *args, **kwargs):
+#         payload = request.body
+#         sig_header = request.META.get('HTTP_STRIPE_SIGNATURE')
+#         event = None
+
+#         try:
+#             event = stripe.Webhook.construct_event(
+#                 payload, sig_header, settings.STRIPE_WEBHOOK_SECRET
+#             )
+#         except ValueError as e:
+#             # Invalid payload
+#             return HttpResponse(status=400)
+#         except stripe.error.SignatureVerificationError as e:
+#             # Invalid signature
+#             return HttpResponse(status=400)
+
+#         # Handle the event
+#         if event['type'] == 'checkout.session.completed':
+#             session = event['data']['object']
+#             user_id = session.get('client_reference_id')
+#             stripe_subscription_id = session.get('subscription')
+#             plan_id = session.get('display_items')[0]['plan']['id']
+#             plan_type = session.get('display_items')[0]['plan']['type']
+
+#             if user_id and stripe_subscription_id:
+#                 Subscription.objects.create(
+#                     user_id=user_id,
+#                     stripe_subscription_id=stripe_subscription_id,
+#                     plan_id=plan_id,
+#                     plan_type=plan_type,
+#                     status='active'
+#                 )
+
+#         return HttpResponse(status=700)
+
+@csrf_exempt
+def stripe_webhook(request):
+    payload = request.body
+    print(payload)
+    return HttpResponse(status=200)
+# class SuccessView(TemplateView):
+#     template_name = 'success.html'
+class SuccessView(View):
+  def get(self, request, checkout_session_id, *args, **kwargs):
+    # Retrieve the checkout session from Stripe
+    session = stripe.checkout.Session.retrieve(checkout_session_id)
+    
+    return render(request, 'success.html', {'session': session})
+
+class CancelView(TemplateView):
+    template_name = 'cancel.html'

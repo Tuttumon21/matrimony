@@ -124,3 +124,14 @@ class Message(models.Model):
 
     def __str__(self):
         return f"{self.sender} -> {self.recipient}: {self.body[:50]}"
+
+class Subscription(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    stripe_subscription_id = models.CharField(max_length=255, null=True, blank=True)
+    plan_id = models.CharField(max_length=100, null=True, blank=True)  # Allow null and blank initially
+    plan_type = models.CharField(max_length=50)
+    status = models.CharField(max_length=50, default='active')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.user.username} - {self.plan_id} ({self.plan_type})'
