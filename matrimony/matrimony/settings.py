@@ -23,7 +23,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 STRIPE_SECRET_KEY = config('STRIPE_SECRET_KEY')
 STRIPE_PUBLISHABLE_KEY = config('STRIPE_PUBLISHABLE_KEY')
 STRIPE_WEBHOOK_SECRET = config('STRIPE_WEBHOOK_SECRET')
-print(STRIPE_WEBHOOK_SECRET)
 #
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-1k9f19oei2*k7l73+rr&el6r5i&f!vy)x5am__*p7&ondi4dul'

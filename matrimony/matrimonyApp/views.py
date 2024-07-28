@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import TemplateView,FormView,ListView
 from .forms import ParentsDetailsForm,PartnerPreferenceForm,FriendRequestForm,MessageForm
 from django.contrib.auth.decorators import login_required
-from .models import ParentsDetails,PartnerPreference,FriendRequest,ProfileExclusion,Message,Subscription
+from .models import ParentsDetails,PartnerPreference,FriendRequest,ProfileExclusion,Message,Subscription,PaymentDetail
 from django.contrib.auth.mixins import LoginRequiredMixin
 from accounts.models import User
 from django.db.models import Q,Max
@@ -247,50 +247,120 @@ stripe.api_key = settings.STRIPE_SECRET_KEY
 class SubscriptionView(LoginRequiredMixin, TemplateView):
     template_name = 'payments/subscription.html'
 
-# @method_decorator(csrf_exempt, name='dispatch')
-# class StripeWebhookView(View):
-#     def post(self, request, *args, **kwargs):
-#         payload = request.body
-#         sig_header = request.META.get('HTTP_STRIPE_SIGNATURE')
-#         event = None
-
-#         try:
-#             event = stripe.Webhook.construct_event(
-#                 payload, sig_header, settings.STRIPE_WEBHOOK_SECRET
-#             )
-#         except ValueError as e:
-#             # Invalid payload
-#             return HttpResponse(status=400)
-#         except stripe.error.SignatureVerificationError as e:
-#             # Invalid signature
-#             return HttpResponse(status=400)
-
-#         # Handle the event
-#         if event['type'] == 'checkout.session.completed':
-#             session = event['data']['object']
-#             user_id = session.get('client_reference_id')
-#             stripe_subscription_id = session.get('subscription')
-#             plan_id = session.get('display_items')[0]['plan']['id']
-#             plan_type = session.get('display_items')[0]['plan']['type']
-
-#             if user_id and stripe_subscription_id:
-#                 Subscription.objects.create(
-#                     user_id=user_id,
-#                     stripe_subscription_id=stripe_subscription_id,
-#                     plan_id=plan_id,
-#                     plan_type=plan_type,
-#                     status='active'
-#                 )
-
-#         return HttpResponse(status=700)
-
+#testing endpoint key
+endpoint_secret = 'whsec_651aa94a96b549741c7d2c99f67f5ac0965f9131c2206ae0db227b92a1f1d439'
 @csrf_exempt
 def stripe_webhook(request):
     payload = request.body
-    print(payload)
+    sig_header = request.headers['STRIPE_SIGNATURE']
+    try:
+        event = stripe.Webhook.construct_event(
+            payload, sig_header, endpoint_secret
+        )
+    except ValueError as e:
+        # Invalid payload
+        print(f'ValueError: {e}')
+        return HttpResponse(status=400)
+    except stripe.error.SignatureVerificationError as e:
+        # Invalid signature
+        print(f'SignatureVerificationError: {e}')
+        return HttpResponse(status=400)
+
+    # Handle the event
+    if event['type'] == 'checkout.session.completed':
+        session = event['data']['object']
+        
+        # Extract relevant details
+        session_mode = session['mode']  # Either 'payment' or 'subscription'
+        session_id = session['id']
+        customer_id = session['customer']
+        amount_total = session['amount_total'] / 100  # Amount in dollars
+        currency = session['currency']
+        payment_status = session['payment_status']
+        customer_email = session['customer_details']['email']
+        customer_name = session['customer_details']['name']
+        customer_phone = session['customer_details']['phone']
+        
+        try:
+            user = User.objects.get(email=customer_email)
+            payment_detail, created = PaymentDetail.objects.update_or_create(
+                user=user,
+                session_id=session_id,
+                defaults={
+                    'session_mode': session_mode,
+                    'customer_id': customer_id,
+                    'amount_total': amount_total,
+                    'currency': currency,
+                    'payment_status': payment_status,
+                    'customer_email': customer_email,
+                    'customer_name': customer_name,
+                    'customer_phone': customer_phone,
+                    'status': 'active' if payment_status == 'paid' else 'inactive'
+                }
+            )
+            # if not created:
+            #     payment_detail.session_mode = session_mode
+            #     payment_detail.session_id = session_id
+            #     payment_detail.amount_total = amount_total
+            #     payment_detail.currency = currency
+            #     payment_detail.payment_status = payment_status
+            #     payment_detail.customer_name = customer_name
+            #     payment_detail.customer_phone = customer_phone
+            #     payment_detail.status = 'active' if payment_status == 'paid' else 'inactive'
+            #     payment_detail.save()
+        except User.DoesNotExist:
+            print(f'User with email {customer_email} does not exist.')
+    
+    elif event['type'] == 'charge.succeeded':
+        charge = event['data']['object']               
+        # Extract the receipt URL
+        receipt_url = charge.get('receipt_url')
+        payment_method_type = charge['payment_method_details']['type']
+        customer_email = charge['billing_details']['email']
+        try:
+            user = User.objects.get(email=customer_email)
+            payment_details = PaymentDetail.objects.update_or_create(
+                user=user,
+                defaults={
+                    'customer_email': customer_email,
+                    'receipt_url': receipt_url,
+                    'payment_method_type': payment_method_type
+                }
+            )
+            # if not created:
+            #     payment_detail.receipt_url = receipt_url
+            #     payment_detail.payment_method_type = payment_method_type
+            #     payment_detail.save()
+            # for payment_detail in payment_details:
+            #     payment_detail.receipt_url = receipt_url
+            #     payment_detail.payment_method_type = payment_method_type
+            #     payment_detail.save()
+        except User.DoesNotExist:
+            print(f'User with email {customer_email} does not exist.')      
+        
+    elif event['type'] == 'invoice.payment_succeeded':
+        invoice = event['data']['object']
+        hosted_invoice_url = invoice['hosted_invoice_url']
+        subscription_id = invoice['subscription']
+        description = invoice['lines']['data'][0]['description'] if invoice['lines']['data'] else None
+        customer_email = invoice['customer_email']
+        invoice_id = invoice['id']
+        
+        try:
+            user = User.objects.get(email=customer_email)
+            payment_details = PaymentDetail.objects.filter(user=user, customer_email=customer_email)
+            for payment_detail in payment_details:
+                payment_detail.hosted_invoice_url = hosted_invoice_url
+                payment_detail.subscription_id = subscription_id
+                payment_detail.description = description
+                payment_detail.invoice_id = invoice_id
+                payment_detail.save()
+        except User.DoesNotExist:
+            print(f'User with email {customer_email} does not exist.')
+    
     return HttpResponse(status=200)
-# class SuccessView(TemplateView):
-#     template_name = 'success.html'
+
+
 class SuccessView(View):
   def get(self, request, checkout_session_id, *args, **kwargs):
     # Retrieve the checkout session from Stripe
