@@ -25,6 +25,9 @@ STRIPE_PUBLISHABLE_KEY = config('STRIPE_PUBLISHABLE_KEY')
 STRIPE_WEBHOOK_SECRET = config('STRIPE_WEBHOOK_SECRET')
 PRICING_TABLE_ID = config('PRICING_TABLE_ID')
 #
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+#
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-1k9f19oei2*k7l73+rr&el6r5i&f!vy)x5am__*p7&ondi4dul'
 
