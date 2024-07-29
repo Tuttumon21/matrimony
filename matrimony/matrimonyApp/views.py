@@ -422,12 +422,18 @@ def stripe_webhook(request):
 
 
 
-class SuccessView(View):
+class SuccessPremiumView(View):
   def get(self, request, checkout_session_id, *args, **kwargs):
     # Retrieve the checkout session from Stripe
     session = stripe.checkout.Session.retrieve(checkout_session_id)
     
-    return render(request, 'success.html', {'session': session})
+    return render(request, 'payments/SuccessPremium.html', {'session': session})
+class SuccessBasicView(View):
+  def get(self, request, checkout_session_id, *args, **kwargs):
+    # Retrieve the checkout session from Stripe
+    session = stripe.checkout.Session.retrieve(checkout_session_id)
+    
+    return render(request, 'payments/SuccessBasic.html', {'session': session})
 
 class CancelView(TemplateView):
     template_name = 'cancel.html'

@@ -34,10 +34,12 @@ urlpatterns = [
     
 
     
-    # path('webhook/', StripeWebhookView.as_view(), name='stripe-webhook'),
+
     path('webhook/',stripe_webhook,name='stripe-webhook'),
-    # path('success/', SuccessView.as_view(), name='success'),
-    path('success/<str:checkout_session_id>/', views.SuccessView.as_view(), name='success'),
+
+    path('successPremium/<str:checkout_session_id>/', views.SuccessPremiumView.as_view(), name='success'),
+    path('successBasic/<str:checkout_session_id>/', views.SuccessBasicView.as_view(), name='success'),
+
     path('cancel/', CancelView.as_view(), name='cancel'),
 
     
