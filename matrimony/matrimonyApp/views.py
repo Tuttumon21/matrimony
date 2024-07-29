@@ -255,8 +255,19 @@ class ProfileDetailView(LoginRequiredMixin, TemplateView):
 
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
+# class SubscriptionView(LoginRequiredMixin, TemplateView):
+#     template_name = 'payments/subscription.html'
 class SubscriptionView(LoginRequiredMixin, TemplateView):
     template_name = 'payments/subscription.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['CUSTOMER_EMAIL'] = self.request.user.email
+        context['PRICING_TABLE_ID'] = settings.PRICING_TABLE_ID
+        context['STRIPE_PUBLISHABLE_KEY'] = settings.STRIPE_PUBLISHABLE_KEY
+        context['PAYMENT_METHOD_TYPES']=["card","link"]
+        return context
+    
 
 #testing endpoint key
 def update_payment_detail(session_data=None, charge_data=None, invoice_data=None):
