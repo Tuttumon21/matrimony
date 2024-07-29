@@ -46,13 +46,15 @@
         }
     </style>
 </head>
+{% load static %}
+{% block content %}
 <body>
     <div class="container text-center">
         <div class="row justify-content-center">
             <div class="col-md-6">
                 <div class="card">
                     <div class="logo">
-                        <img src="https://via.placeholder.com/100" alt="Logo" class="img-fluid">
+                        <img src="{% static 'images/Payments/PaymentLOGO.png' %}" alt="Logo" class="img-fluid">
                     </div>
                     <div class="plan">Payment for Premium</div>
                     <div class="price">₹4999.00 <small>life time</small></div>
@@ -63,6 +65,8 @@
                     <h2>Thanks for Purchasing</h2>
                     <p>A payment to Stripe will appear on your statement.</p>
                     <p><strong>₹4999.00</strong></p>
+                    <!-- <p><a href="{% url 'matrimonyApp:home' %}" class="btn btn-outline-dark">Receipt</a> -->
+                    <p><a href="{% url 'matrimonyApp:home' %}" class="btn btn-outline-dark">HOME</a></p>
                     <small class="text-muted">Powered by Stripe &nbsp; | &nbsp; <a href="#" class="text-muted">Terms</a> &nbsp; | &nbsp; <a href="#" class="text-muted">Privacy</a></small>
                 </div>
             </div>
@@ -74,4 +78,5 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="https://kit.fontawesome.com/a076d05399.js"></script>
 </body>
+{% endblock content %}
 </html>
