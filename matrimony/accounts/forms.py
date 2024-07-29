@@ -1,7 +1,7 @@
 from django.forms import Form, ModelForm, CharField, TextInput, EmailField, PasswordInput, EmailInput,NumberInput, Select,DateInput,FileInput
 from .models import User
 from django import forms
-
+from django.contrib.auth.forms import PasswordChangeForm
 
 class LoginForm(Form):
     email = EmailField(
@@ -183,3 +183,21 @@ class ProfileUpdateForm(BasicInfoForm):
         if not pic and self.instance and self.instance.profile_pic:
             return self.instance.profile_pic
         return pic
+
+class CustomPasswordChangeForm(PasswordChangeForm):
+    class Meta:
+        model = User
+        fields = ['old_password', 'new_password1', 'new_password2']
+
+    old_password = forms.CharField(
+        label="Old Password",
+        widget=forms.PasswordInput(attrs={'class': 'form-control'}),
+    )
+    new_password1 = forms.CharField(
+        label="New Password",
+        widget=forms.PasswordInput(attrs={'class': 'form-control'}),
+    )
+    new_password2 = forms.CharField(
+        label="Confirm New Password",
+        widget=forms.PasswordInput(attrs={'class': 'form-control'}),
+    )

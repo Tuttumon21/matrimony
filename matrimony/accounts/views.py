@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect,reverse
-from.forms import LoginForm, RegistrationForm, ProfileUpdateForm, BasicInfoForm, LifeStyleForm, EmploymentStatusForm,RelationshipTypeForm
+from.forms import LoginForm, RegistrationForm, ProfileUpdateForm, BasicInfoForm, LifeStyleForm, EmploymentStatusForm,RelationshipTypeForm,CustomPasswordChangeForm
 from django.contrib.auth import authenticate, login, logout
 from .models import User
 from django.forms.forms import BaseForm
@@ -7,6 +7,7 @@ from django.urls import reverse_lazy
 from typing import Any
 from django.views.generic import View, TemplateView, DetailView, UpdateView, FormView
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.views import PasswordChangeView
 
 
 # Create your views here.
@@ -96,8 +97,15 @@ class ProfileUpdateView(LoginRequiredMixin, FormView):
         form.save()
         return super().form_valid(form)
 
-class ChangePasswordView(LoginRequiredMixin, TemplateView):
+class ChangePasswordView(LoginRequiredMixin, PasswordChangeView):
     template_name = 'accounts/change_password.html'
+    form_class = CustomPasswordChangeForm
+    success_url = reverse_lazy('accounts:profile')
+
+    def form_valid(self, form):
+        form.save()
+        # Add any other actions you want to perform after changing the password
+        return super().form_valid(form)
 
 def basic_info_view(request):
     if request.method == 'POST':

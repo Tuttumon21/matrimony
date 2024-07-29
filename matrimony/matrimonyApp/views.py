@@ -83,7 +83,6 @@ class SuggestionView(LoginRequiredMixin, TemplateView):
         try:
             partner_preference = user.partner_preference
             interested_gender = user.parents_details.interested_gender
-            print(interested_gender)
             friends = FriendRequest.objects.filter(
                 Q(from_user=user) | Q(to_user=user),
                 status='accepted'
