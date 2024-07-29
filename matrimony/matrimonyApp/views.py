@@ -248,7 +248,87 @@ class SubscriptionView(LoginRequiredMixin, TemplateView):
     template_name = 'payments/subscription.html'
 
 #testing endpoint key
+def update_payment_detail(session_data=None, charge_data=None, invoice_data=None):
+    print("Inside update_payment_detail")
+    #for payment method save
+    if session_data:
+        email = session_data['customer_email']
+        payment_intent = session_data['payment_intent']
+        
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            print(f'User with email {email} does not exist.')
+            return
+        
+        update_fields = {
+            'session_mode': session_data.get('session_mode', None),
+            'customer_id': session_data.get('customer_id', None),
+            'amount_total': session_data.get('amount_total', None),
+            'currency': session_data.get('currency', None),
+            'payment_status': session_data.get('payment_status', None),
+            'customer_email': session_data.get('customer_email', None),
+            'customer_name': session_data.get('customer_name', None),
+            'customer_phone': session_data.get('customer_phone', None),
+            'status': 'active' if session_data.get('payment_status') == 'paid' else 'inactive',
+            'receipt_url': charge_data.get('receipt_url') if charge_data else None,
+            'payment_method_type': charge_data.get('payment_method_type') if charge_data else None,
+            'hosted_invoice_url': invoice_data.get('hosted_invoice_url') if invoice_data else None,
+            'subscription_id': invoice_data.get('subscription_id') if invoice_data else None,
+            'description': invoice_data.get('description') if invoice_data else None,
+            'invoice_id': invoice_data.get('invoice_id') if invoice_data else None
+        }
+
+        payment_detail, created = PaymentDetail.objects.update_or_create(
+            user=user,
+            payment_intent=payment_intent,
+            defaults=update_fields
+        )
+        
+        print(f"Created or updated payment detail for {email}")
+    
+    #for subscription Method save
+    if invoice_data:
+        email = invoice_data['customer_email']
+        payment_intent = invoice_data['payment_intent']
+        
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            print(f'User with email {email} does not exist.')
+            return
+        
+        update_fields = {
+            'session_mode': invoice_data.get('session_mode', None),
+            'customer_id': invoice_data.get('customer_id', None),
+            'amount_total': invoice_data.get('amount_total', None),
+            'currency': invoice_data.get('currency', None),
+            'payment_status': invoice_data.get('payment_status', None),
+            'customer_email': invoice_data.get('customer_email', None),
+            'customer_name': invoice_data.get('customer_name', None),
+            'customer_phone': invoice_data.get('customer_phone', None),
+            'status': 'active' if invoice_data.get('payment_status') == 'paid' else 'inactive',
+            'receipt_url': charge_data.get('receipt_url') if charge_data else None,
+            'payment_method_type': charge_data.get('payment_method_type') if charge_data else None,
+            'hosted_invoice_url': invoice_data.get('hosted_invoice_url') if invoice_data else None,
+            'subscription_id': invoice_data.get('subscription_id') if invoice_data else None,
+            'description': invoice_data.get('description') if invoice_data else None,
+            'invoice_id': invoice_data.get('invoice_id') if invoice_data else None
+        }
+
+        payment_detail, created = PaymentDetail.objects.update_or_create(
+            user=user,
+            payment_intent=payment_intent,
+            defaults=update_fields
+        )
+        
+        print(f"Created or updated payment detail for {email}")
+
+
 endpoint_secret = 'whsec_651aa94a96b549741c7d2c99f67f5ac0965f9131c2206ae0db227b92a1f1d439'
+event_data_storage = {}
+
+
 @csrf_exempt
 def stripe_webhook(request):
     payload = request.body
@@ -267,98 +347,79 @@ def stripe_webhook(request):
         return HttpResponse(status=400)
 
     # Handle the event
-    if event['type'] == 'checkout.session.completed':
-        session = event['data']['object']
-        
-        # Extract relevant details
-        session_mode = session['mode']  # Either 'payment' or 'subscription'
-        session_id = session['id']
-        customer_id = session['customer']
-        amount_total = session['amount_total'] / 100  # Amount in dollars
-        currency = session['currency']
-        payment_status = session['payment_status']
-        customer_email = session['customer_details']['email']
-        customer_name = session['customer_details']['name']
-        customer_phone = session['customer_details']['phone']
-        
-        try:
-            user = User.objects.get(email=customer_email)
-            payment_detail, created = PaymentDetail.objects.update_or_create(
-                user=user,
-                session_id=session_id,
-                defaults={
-                    'session_mode': session_mode,
-                    'customer_id': customer_id,
-                    'amount_total': amount_total,
-                    'currency': currency,
-                    'payment_status': payment_status,
-                    'customer_email': customer_email,
-                    'customer_name': customer_name,
-                    'customer_phone': customer_phone,
-                    'status': 'active' if payment_status == 'paid' else 'inactive'
-                }
-            )
-            # if not created:
-            #     payment_detail.session_mode = session_mode
-            #     payment_detail.session_id = session_id
-            #     payment_detail.amount_total = amount_total
-            #     payment_detail.currency = currency
-            #     payment_detail.payment_status = payment_status
-            #     payment_detail.customer_name = customer_name
-            #     payment_detail.customer_phone = customer_phone
-            #     payment_detail.status = 'active' if payment_status == 'paid' else 'inactive'
-            #     payment_detail.save()
-        except User.DoesNotExist:
-            print(f'User with email {customer_email} does not exist.')
+
+    event_type = event['type']
+    data = event['data']['object']
+    payment_intent = data.get('payment_intent', None)
+    customer_email = data.get('customer_email', None)
+
+    if payment_intent:
+        if payment_intent not in event_data_storage:
+            event_data_storage[payment_intent] = {}
     
-    elif event['type'] == 'charge.succeeded':
-        charge = event['data']['object']               
-        # Extract the receipt URL
-        receipt_url = charge.get('receipt_url')
-        payment_method_type = charge['payment_method_details']['type']
-        customer_email = charge['billing_details']['email']
-        try:
-            user = User.objects.get(email=customer_email)
-            payment_details = PaymentDetail.objects.update_or_create(
-                user=user,
-                defaults={
-                    'customer_email': customer_email,
-                    'receipt_url': receipt_url,
-                    'payment_method_type': payment_method_type
-                }
-            )
-            # if not created:
-            #     payment_detail.receipt_url = receipt_url
-            #     payment_detail.payment_method_type = payment_method_type
-            #     payment_detail.save()
-            # for payment_detail in payment_details:
-            #     payment_detail.receipt_url = receipt_url
-            #     payment_detail.payment_method_type = payment_method_type
-            #     payment_detail.save()
-        except User.DoesNotExist:
-            print(f'User with email {customer_email} does not exist.')      
-        
-    elif event['type'] == 'invoice.payment_succeeded':
-        invoice = event['data']['object']
-        hosted_invoice_url = invoice['hosted_invoice_url']
-        subscription_id = invoice['subscription']
-        description = invoice['lines']['data'][0]['description'] if invoice['lines']['data'] else None
-        customer_email = invoice['customer_email']
-        invoice_id = invoice['id']
-        
-        try:
-            user = User.objects.get(email=customer_email)
-            payment_details = PaymentDetail.objects.filter(user=user, customer_email=customer_email)
-            for payment_detail in payment_details:
-                payment_detail.hosted_invoice_url = hosted_invoice_url
-                payment_detail.subscription_id = subscription_id
-                payment_detail.description = description
-                payment_detail.invoice_id = invoice_id
-                payment_detail.save()
-        except User.DoesNotExist:
-            print(f'User with email {customer_email} does not exist.')
-    
+        if event_type == 'checkout.session.completed':
+            event_data_storage[payment_intent]['session_data'] = {
+                'session_mode': data['mode'],
+                'customer_id': data['customer'],
+                'amount_total': data['amount_total'],
+                'currency': data['currency'],
+                'payment_status': data['payment_status'],
+                'customer_email': data['customer_details']['email'],
+                'customer_name': data['customer_details']['name'],
+                'customer_phone': data['customer_details']['phone'],
+                'payment_intent': data['payment_intent']
+            }
+            print(f"Stored session data for payment_intent {payment_intent}")
+
+        elif event_type == 'charge.succeeded':
+            event_data_storage[payment_intent]['charge_data'] = {
+                'receipt_url': data.get('receipt_url'),
+                'payment_method_type': data['payment_method_details']['type'],
+                'customer_email': data['billing_details']['email'],
+                'payment_intent': data['payment_intent']
+            }
+            print(f"Stored charge data for payment_intent {payment_intent}")
+
+        elif event_type == 'invoice.payment_succeeded':
+            event_data_storage[payment_intent]['invoice_data'] = {
+                'hosted_invoice_url': data['hosted_invoice_url'],
+                'subscription_id': data['subscription'],
+                'description': data['lines']['data'][0]['description'] if data['lines']['data'] else None,
+                'customer_email': data['customer_email'],
+                'invoice_id': data['id'],
+                'payment_intent': data['payment_intent'],
+                'customer_email': data['customer_email'],
+                'customer_name': data['customer_name'],
+                'customer_phone': data['customer_phone'],
+                'payment_status': data['status'],
+                'currency': data['currency'],
+                'amount_total': data['total'],
+                'customer_id': data['customer'],
+                'session_mode': data['lines']['data'][0]['type'] if data['lines']['data'] else None,
+            }
+            print(f"Stored invoice data for payment_intent {payment_intent}")
+            # print(event_data_storage[payment_intent]['invoice_data'])
+
+        # Attempt to update the payment details if all required data is present
+        if payment_intent in event_data_storage:
+            session_data = event_data_storage[payment_intent].get('session_data', None)
+            charge_data = event_data_storage[payment_intent].get('charge_data', None)
+            invoice_data = event_data_storage[payment_intent].get('invoice_data', None)
+            
+
+            if session_data and (charge_data or invoice_data):
+                print("Attempting to update payment detail for Payment Method...")
+                update_payment_detail(session_data=session_data, charge_data=charge_data, invoice_data=invoice_data)
+                # Cleanup after processing
+                del event_data_storage[payment_intent]
+            elif charge_data and (session_data or invoice_data):
+                print("Attempting to update payment detail for Subscription Method...")
+                update_payment_detail(session_data=session_data, charge_data=charge_data, invoice_data=invoice_data)
+                # Cleanup after processing
+                del event_data_storage[payment_intent]
+
     return HttpResponse(status=200)
+
 
 
 class SuccessView(View):

@@ -138,6 +138,7 @@ class Subscription(models.Model):
 
 class PaymentDetail(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    payment_intent = models.CharField(max_length=255, null=True, blank=True)
     session_mode = models.CharField(max_length=255, null=True, blank=True)
     session_id = models.CharField(max_length=255, null=True, blank=True)
     customer_id = models.CharField(max_length=255, null=True, blank=True)
