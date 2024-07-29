@@ -67,6 +67,9 @@ class FriendRequestForm(forms.ModelForm):
         model = FriendRequest
         fields = ['to_user']
 
+class SaveProfileForm(forms.Form):
+    pass
+
 class MessageForm(forms.ModelForm):
     class Meta:
         model = Message

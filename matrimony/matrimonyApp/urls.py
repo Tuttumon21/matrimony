@@ -12,6 +12,9 @@ urlpatterns = [
 
     path('suggestions/',SuggestionView.as_view(), name='suggestions'),
 
+    path('save_profile/<int:profile_id>/', save_profile, name='save_profile'),
+    path('saved_profiles/', saved_profiles, name='saved_profiles'),
+
     path('exclude_profile/<int:profile_id>/', ExcludeProfileView.as_view(), name='exclude_profile'),
 
 

@@ -1,0 +1,26 @@
+<!-- templates/saved_profiles.html -->
+
+{% extends 'shared/matrimonybase.html' %}
+{% block content %}
+<div class="container mt-2">
+    <div class="text mb-2 p-1" style="background-color: black;color: white;">
+        <h1 class="text-start animate__animated animate__fadeIn">Saved Profiles</h1>
+    </div>
+    <div class="row">
+        {% for saved_profile in saved_profiles %}
+        <div class="col-md-4" style="width: 20%;">
+            <div class="card mb-4 shadow-sm animate__animated animate__zoomIn">
+                {% if saved_profile.saved_profile.profile_pic %}
+                <img src="{{ saved_profile.saved_profile.profile_pic.url }}" class="card-img-top" style="object-fit: cover; width: 100%; height: 200px;" alt="{{ saved_profile.saved_profile.get_full_name }}">
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ saved_profile.saved_profile.get_full_name }}</h5>
+                    <p class="card-text">Age: {{ saved_profile.saved_profile.age }}</p>
+                    <p class="card-text">Location: {{ saved_profile.saved_profile.parents_details.district }}</p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -53,6 +53,10 @@
                                     {% csrf_token %}
                                     <button type="submit" class="btn btn-outline-dark mt-2">Don't Show</button>
                                 </form>
+                                <form method="post" action="{% url 'matrimonyApp:save_profile' profile.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-outline-dark mt-2">Save Profile</button>
+                                </form>
                             </div>
                         </div>
                     </div>

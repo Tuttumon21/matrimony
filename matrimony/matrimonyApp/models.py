@@ -102,6 +102,17 @@ class FriendRequest(models.Model):
         if self.status == 'accepted':
             self.delete()
 
+class SavedProfile(models.Model):
+    user = models.ForeignKey(User, related_name='saved_profiles', on_delete=models.CASCADE)
+    saved_profile = models.ForeignKey(User, related_name='saved_by', on_delete=models.CASCADE)
+    saved_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'saved_profile')
+
+    def __str__(self):
+        return f"{self.user} saved {self.saved_profile}"
+
 class ProfileExclusion(models.Model):
     user = models.ForeignKey(User, related_name='exclusions', on_delete=models.CASCADE)
     excluded_profile = models.ForeignKey(User, related_name='excluded_by', on_delete=models.CASCADE)

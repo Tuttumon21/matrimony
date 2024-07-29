@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import TemplateView,FormView,ListView
-from .forms import ParentsDetailsForm,PartnerPreferenceForm,FriendRequestForm,MessageForm
+from .forms import ParentsDetailsForm,PartnerPreferenceForm,FriendRequestForm,MessageForm,SaveProfileForm
 from django.contrib.auth.decorators import login_required
-from .models import ParentsDetails,PartnerPreference,FriendRequest,ProfileExclusion,Message,Subscription,PaymentDetail
+from .models import ParentsDetails,PartnerPreference,FriendRequest,ProfileExclusion,Message,Subscription,PaymentDetail, SavedProfile
 from django.contrib.auth.mixins import LoginRequiredMixin
 from accounts.models import User
 from django.db.models import Q,Max
@@ -151,6 +151,18 @@ class FriendsListView(LoginRequiredMixin, ListView):
             status='accepted'
         ).select_related('from_user', 'to_user')
 
+@login_required
+def save_profile(request, profile_id):
+    profile = get_object_or_404(User, id=profile_id)
+    saved_profile, created = SavedProfile.objects.get_or_create(user=request.user, saved_profile=profile)
+    if created:
+        saved_profile.save()
+    return redirect('matrimonyApp:suggestions')
+
+@login_required
+def saved_profiles(request):
+    saved_profiles = SavedProfile.objects.filter(user=request.user).select_related('saved_profile', 'saved_profile__parents_details')
+    return render(request, 'saved_profiles.html', {'saved_profiles': saved_profiles})
 
 @login_required
 def unfriend(request, user_id):
