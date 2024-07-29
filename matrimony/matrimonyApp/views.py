@@ -283,6 +283,8 @@ def update_payment_detail(session_data=None, charge_data=None, invoice_data=None
             print(f'User with email {email} does not exist.')
             return
         
+        PaymentDetail.objects.filter(user=user).delete()
+
         update_fields = {
             'session_mode': session_data.get('session_mode', None),
             'customer_id': session_data.get('customer_id', None),
@@ -319,6 +321,8 @@ def update_payment_detail(session_data=None, charge_data=None, invoice_data=None
         except User.DoesNotExist:
             print(f'User with email {email} does not exist.')
             return
+        
+        PaymentDetail.objects.filter(user=user).delete()
         
         update_fields = {
             'session_mode': invoice_data.get('session_mode', None),
