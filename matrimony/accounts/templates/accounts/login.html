@@ -1,21 +1,29 @@
-{% extends 'shared/base.html' %} {% block content %}
-<div class="row">
-  <div class="col-sm-4 offset-sm-4 mt-5 shadow">
-    <h2 class="text-center">Login Here</h2>
-    <form method="post">
-      {% csrf_token %}
-      {% include 'components/form_field.html' with field=form.email %}
-      {% include 'components/form_field.html' with field=form.password %}
-      <div class="d-grid">
-        <button type="submit" class="btn btn-primary my-3">Login</button>
-        <p class="text-end">Don't have an account! <a href="{% url 'accounts:register' %}">Register</a></p>
-      </div>
-      {% if form.non_field_errors %}
-        <div class="alert alert-danger">
-          {{ form.non_field_errors }}
+{% extends 'shared/base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6 col-sm-8 col-12 shadow p-4">
+      <h2 class="text-center mb-4">Login Here</h2>
+      <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+          {% include 'components/form_field.html' with field=form.email %}
         </div>
-      {% endif %}
-    </form>
+        <div class="mb-3">
+          {% include 'components/form_field.html' with field=form.password %}
+        </div>
+        <div class="d-grid">
+          <button type="submit" class="btn btn-primary my-3">Login</button>
+          <p class="text-end">Don't have an account! <a href="{% url 'accounts:register' %}">Register</a></p>
+        </div>
+        {% if form.non_field_errors %}
+          <div class="alert alert-danger">
+            {{ form.non_field_errors }}
+          </div>
+        {% endif %}
+      </form>
+    </div>
   </div>
 </div>
 {% endblock content %}
