@@ -150,6 +150,17 @@ class FriendsListView(LoginRequiredMixin, ListView):
             Q(from_user=self.request.user) | Q(to_user=self.request.user),
             status='accepted'
         ).select_related('from_user', 'to_user')
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Check if the user has an active, paid plan
+        has_active_paid_plan = PaymentDetail.objects.filter(
+            user=self.request.user,
+            status='active',
+            payment_status='paid'
+        ).exists()
+        context['has_active_paid_plan'] = has_active_paid_plan
+        return context
 
 @login_required
 def save_profile(request, profile_id):

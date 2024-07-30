@@ -28,7 +28,9 @@
                 {% csrf_token %}
                 <button type="submit" class="btn btn-danger">Unfriend</button>
             </form>
+            {% if has_active_paid_plan %}
             <a href="{% url 'matrimonyApp:chat_room' friend.from_user.id %}" class="btn btn-primary">Chat</a>
+            {% endif %}
             <a href="{% url 'matrimonyApp:profile_detail' profile_id=friend.from_user.id %}" class="btn btn-secondary">View Full Profile</a>
         </div>
         {% endif %}
