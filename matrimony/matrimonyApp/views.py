@@ -266,8 +266,16 @@ def ChatWithFriendsView(request, room_name=None):
     )
     
     # Annotate friends with the last message time
+    # friends_with_last_message = friends.annotate(
+    #     last_message_time=Max('received_messages__timestamp')
+    # ).order_by('-last_message_time')
     friends_with_last_message = friends.annotate(
-        last_message_time=Max('received_messages__timestamp')
+        last_message_time=Max(
+            Case(
+                When(sent_messages__recipient=user, then=F('sent_messages__timestamp')),
+                output_field=DateTimeField()
+            )
+        )
     ).order_by('-last_message_time')
 
     
