@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from .models import ParentsDetails,PartnerPreference,FriendRequest,ProfileExclusion,Message,Subscription,PaymentDetail, SavedProfile
 from django.contrib.auth.mixins import LoginRequiredMixin
 from accounts.models import User
-from django.db.models import Q,Max
+from django.db.models import Q,Max,F, Case, When, DateTimeField
 from django.views import View
 from django.urls import reverse
 
@@ -253,6 +253,49 @@ def chat_with_friends(request, room_name=None):
         'friend': friend,
         'messages': messages,
     })
+
+
+def ChatWithFriendsView(request, room_name=None):
+    user = request.user
+    
+    # Retrieve friends who have sent a message to the logged-in user
+    friends = User.objects.filter(
+        id__in=Message.objects.filter(
+            recipient=user
+        ).values_list('sender', flat=True).distinct()
+    )
+    
+    # Annotate friends with the last message time
+    friends_with_last_message = friends.annotate(
+        last_message_time=Max('received_messages__timestamp')
+    ).order_by('-last_message_time')
+
+    
+    # Initialize friend and messages
+    friend = None
+    messages = []
+
+    if room_name:
+        # Fetch the friend based on room_name
+        friend = get_object_or_404(User, username=room_name)
+        
+        # Get messages between the logged-in user and the specified friend
+        messages = Message.objects.filter(
+            Q(sender=user, recipient=friend) |
+            Q(sender=friend, recipient=user)
+        ).order_by('timestamp')
+    
+    if request.method == 'POST':
+        body = request.POST.get('body')
+        if body and friend:
+            Message.objects.create(sender=user, recipient=friend, body=body)
+
+    return render(request, 'chat_with_free_friends.html', {
+        'friends': friends_with_last_message,
+        'friend': friend,
+        'messages': messages,
+    })
+    
 
 class ProfileDetailView(LoginRequiredMixin, TemplateView):
     template_name = 'profile_detail.html'

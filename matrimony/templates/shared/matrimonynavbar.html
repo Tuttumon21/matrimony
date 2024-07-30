@@ -57,6 +57,8 @@
           <a class="list-group-item list-group-item-action list-group-item-light" href="{% url 'matrimonyApp:view_requests' %}">View Request</a>
           {% if has_subscription %}
           <a class="list-group-item list-group-item-action list-group-item-light" href="{% url 'matrimonyApp:chat_with_friends' %}">Message</a>
+          {% else %}
+          <a class="list-group-item list-group-item-action list-group-item-light" href="{% url 'matrimonyApp:chat_with_free_friends' %}">Free Message</a>
           {% endif %}
         </div>
       </div>

@@ -30,6 +30,10 @@ urlpatterns = [
     
     path('chat/', views.chat_with_friends, name='chat_with_friends'),
     path('chat/<str:room_name>/', views.chat_with_friends, name='chat_with_friends'),
+    
+    
+    path('freechat/', views.ChatWithFriendsView, name='chat_with_free_friends'),
+    path('freechat/<str:room_name>/', views.ChatWithFriendsView, name='chat_with_free_friends'),
 
     path('profile/<int:profile_id>/', views.ProfileDetailView.as_view(), name='profile_detail'),
 

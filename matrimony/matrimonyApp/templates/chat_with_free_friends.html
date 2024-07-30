@@ -1,0 +1,121 @@
+<!-- templates/chat_with_friends.html -->
+{% extends 'shared/matrimonybase.html' %}
+{% block content %}
+<style>
+    .chat-page {
+        display: flex;
+        height: 80vh;
+    }
+    .friends-list {
+        width: 20%;
+        border-right: 1px solid #ddd;
+        overflow-y: auto;
+        padding: 10px;
+    }
+    .friends-list h3 {
+        margin-top: 0;
+    }
+    .friends-list a {
+        display: flex;
+        align-items: center;
+        padding: 10px;
+        border-radius: 5px;
+        text-decoration: none;
+        color: black;
+        margin-bottom: 5px;
+        background-color: #f9f9f9;
+    }
+    .friends-list a:hover {
+        background-color: #e9e9e9;
+    }
+    .friends-list img {
+        border-radius: 50%;
+        margin-right: 10px;
+        width: 40px;
+        height: 40px;
+    }
+    .chat-container {
+        justify-content: center;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        padding: 10px;
+    }
+    #chat-box {
+        flex: 1;
+        overflow-y: auto;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        margin-bottom: 10px;
+        background-color: #f9f9f9;
+    }
+    .message {
+        margin-bottom: 10px;
+        padding: 10px;
+        border-radius: 8px;
+        max-width: 100%;
+        word-wrap: break-word;
+    }
+    .message.sent {
+        background-color: #007bff;
+        color: white;
+        align-self: flex-end;
+        text-align: right;
+    }
+    .message.received {
+        background-color: #e1e1e1;
+        align-self: flex-start;
+    }
+    .chat-input-container {
+        display: flex;
+        align-items: center;
+    }
+    .chat-input-container textarea {
+        flex: 1;
+        resize: none;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin-right: 10px;
+    }
+    .chat-input-container button {
+        padding: 10px 20px;
+    }
+    .text {
+        font-size: xx-large;
+    }
+</style>
+
+<div class="chat-page">
+    <div class="friends-list">
+        <h3>Your Friends</h3>
+        {% for friend in friends %}
+        <a href="{% url 'matrimonyApp:chat_with_free_friends' room_name=friend.username %}">
+            <img src="{{ friend.profile_pic.url }}" alt="{{ friend.get_full_name }}'s profile image">
+            {{ friend.get_full_name }}
+        </a>        
+        {% endfor %}
+    </div>
+    <div class="chat-container">
+        {% if friend %}
+        <h2>Chat with {{ friend.get_full_name }}</h2>
+        <div id="chat-box">
+            {% for message in messages %}
+            <div class="message {% if message.sender == request.user %}sent{% else %}received{% endif %}">
+                <strong>{{ message.sender.get_full_name }}:</strong> {{ message.body }}
+            </div>
+            {% endfor %}
+        </div>
+        <form method="post" class="chat-input-container">
+            {% csrf_token %}
+            <textarea name="body" placeholder="Type your message here" rows="3" required></textarea>
+            <button type="submit" class="btn btn-outline-primary">Send</button>
+        </form>
+        {% else %}
+        <p class="text text-center">Buy a Subscription to start chatting.</p>
+        <p class="text text-center">limited Access chat Now...</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
