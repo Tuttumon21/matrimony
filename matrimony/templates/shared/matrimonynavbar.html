@@ -39,9 +39,9 @@
   </div>
   
 
-  <div class="card  mx-3">
+  <div class="card mx-3">
     <div class="card-body text-end">
-      Free User
+      {{ subscription_type }}
     </div>
   </div>
   <div class="offcanvas-body d-flex flex-column">
@@ -55,7 +55,9 @@
           <a class="list-group-item list-group-item-action list-group-item-light" href="{% url 'matrimonyApp:friends_list' %}">Friends List</a>
           <a class="list-group-item list-group-item-action list-group-item-light" href="{% url 'matrimonyApp:saved_profiles' %}">Saved Profiles</a>
           <a class="list-group-item list-group-item-action list-group-item-light" href="{% url 'matrimonyApp:view_requests' %}">View Request</a>
-          <a class="list-group-item list-group-item-action list-group-item-light" href="{% url 'matrimonyApp:chat_with_friends' %}">message</a>
+          {% if has_subscription %}
+          <a class="list-group-item list-group-item-action list-group-item-light" href="{% url 'matrimonyApp:chat_with_friends' %}">Message</a>
+          {% endif %}
         </div>
       </div>
     </div>
