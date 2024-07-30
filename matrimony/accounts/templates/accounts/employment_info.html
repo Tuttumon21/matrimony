@@ -4,6 +4,19 @@
 <div class="row">
   <div class="col-sm-8 offset-sm-2 mt-5 shadow p-4">
     <h1 class="text-center">Update Employment Status</h1>
+    <!-- Progress Bar -->
+    <div class="progress mb-4">
+      <div class="progress-bar progress-bar-striped progress-bar-animated" 
+           role="progressbar" 
+           aria-label="Progress"
+           aria-valuenow="{{ user.profile_completed }}" 
+           aria-valuemin="0" 
+           aria-valuemax="100"
+           style="width: {{ user.profile_completed }}%;">
+        {{ user.profile_completed }}%
+      </div>
+    </div>
+    
     <form method="post">
       {% csrf_token %}
       

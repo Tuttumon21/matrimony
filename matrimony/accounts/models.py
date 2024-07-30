@@ -77,10 +77,12 @@ class User(AbstractUser):
 
     
     RELATIONSHIP_CHOICES = [
+        ('SELECT', 'SELECT'),
         ('short_term', 'Short Term'),
         ('long_term', 'Long Term'),
     ]
-    relationship_type = models.CharField(max_length=10,default='short_term', choices=RELATIONSHIP_CHOICES)
+    relationship_type = models.CharField(max_length=10, choices=RELATIONSHIP_CHOICES)
+    profile_completed = models.PositiveIntegerField(default=0)  # 0% to 100%
 
 
 

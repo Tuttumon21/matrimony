@@ -13,8 +13,7 @@ from django.contrib.auth.views import PasswordChangeView
 # Create your views here.
 class LoginView(View):
     def get(self, request):
-        context = {}
-        context['form'] = LoginForm()
+        context = {'form': LoginForm()}
         return render(request, 'accounts/login.html', context)
     
     def post(self, request):
@@ -28,22 +27,32 @@ class LoginView(View):
                 user_from_db = User.objects.get(email=email)
                 username = user_from_db.username
                 user = authenticate(request, username=username, password=password)
+                
                 if user is not None:
                     login(request, user)
+                    
+                    # Check form completion status
+                    if user.profile_completed < 100:
+                        if user.profile_completed == 0:
+                            return redirect(reverse('accounts:basic_info'))
+                        if user.profile_completed == 25:
+                            return redirect(reverse('accounts:lifestyle_info'))
+                        elif user.profile_completed == 50:
+                            return redirect(reverse('accounts:employment_status'))
+                        elif user.profile_completed == 75:
+                            return redirect(reverse('accounts:relationship_type'))
 
+                    # Redirect based on relationship type
                     if user_from_db.relationship_type == 'long_term':
                         return redirect('matrimonyApp:home')
                     elif user_from_db.relationship_type == 'short_term':
                         return redirect('/')
-                    # return redirect('matrimonyApp:home')
-                # return redirect('matrimonyApp:home')
                 else:
                     form.add_error(None, 'Invalid email or password.')
 
             except User.DoesNotExist:
-                form.add_error(None, 'Invalid email or password.User does not exist.')
-                # return render(request, 'accounts/login.html', context)
-            
+                form.add_error(None, 'Invalid email or password. User does not exist.')
+        
         return render(request, 'accounts/login.html', context)
 
 def user_registration(request):
@@ -112,9 +121,17 @@ def basic_info_view(request):
         form = BasicInfoForm(request.POST, request.FILES, instance=request.user)
         if form.is_valid():
             form.save()
+            request.user.profile_completed = 25
+            request.user.save()
             return redirect(reverse('accounts:lifestyle_info'))  # Change to your desired redirect URL
     else:
         form = BasicInfoForm(instance=request.user)
+    context = {
+        'form': form,
+        'user': request.user  # Pass the user object to the template
+    }
+    
+    
     return render(request, 'accounts/basic_info.html', {'form': form})
 
 def lifestyle_view(request):
@@ -122,6 +139,8 @@ def lifestyle_view(request):
         form = LifeStyleForm(request.POST, instance=request.user)
         if form.is_valid():
             form.save()
+            request.user.profile_completed = 50
+            request.user.save()
             return redirect(reverse('accounts:employment_status'))
         else:
             form.add_error(None, 'Please fill in all required fields.')
@@ -134,6 +153,8 @@ def employment_status_view(request):
         form = EmploymentStatusForm(request.POST, instance=request.user)
         if form.is_valid():
             form.save()
+            request.user.profile_completed = 75
+            request.user.save()
             return redirect(reverse('accounts:relationship_type'))
     else:
         form = EmploymentStatusForm(instance=request.user)
@@ -144,6 +165,8 @@ def relationship_type_view(request):
         form = RelationshipTypeForm(request.POST, instance=request.user)
         if form.is_valid():
             relationship_type_instance = form.save()
+            request.user.profile_completed = 100
+            request.user.save()
 
             if relationship_type_instance.relationship_type == 'short_term':
                 return redirect('datingapp_dashboard')  # URL name for the dating app dashboard
