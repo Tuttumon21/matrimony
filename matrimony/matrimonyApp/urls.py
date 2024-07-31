@@ -36,6 +36,7 @@ urlpatterns = [
     path('freechat/<str:room_name>/', views.ChatWithFriendsView, name='chat_with_free_friends'),
 
     path('profile/<int:profile_id>/', views.ProfileDetailView.as_view(), name='profile_detail'),
+    path('myprofile/', views.MyProfileView.as_view(), name='my_profile_detail'),
 
     path('subscription/', SubscriptionView.as_view(), name='subscription'),
     

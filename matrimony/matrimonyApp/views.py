@@ -338,6 +338,15 @@ class ProfileDetailView(LoginRequiredMixin, TemplateView):
         context['profile'] = profile
         return context
 
+class MyProfileView(LoginRequiredMixin, TemplateView):
+    template_name = 'my_profile_details.html'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        context['profile'] = user
+        return context
+
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 # class SubscriptionView(LoginRequiredMixin, TemplateView):
