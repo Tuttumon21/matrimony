@@ -177,7 +177,11 @@ def saved_profiles(request):
 
 @login_required
 def unfriend(request, user_id):
-    friend_request = get_object_or_404(FriendRequest, from_user=request.user, to_user__id=user_id, status='accepted')
+    # friend_request = get_object_or_404(FriendRequest, from_user=request.user, to_user__id=user_id, status='accepted')
+    friend_request = FriendRequest.objects.filter(
+        Q(from_user=request.user, to_user_id=user_id, status='accepted') |
+        Q(from_user_id=user_id, to_user=request.user, status='accepted')
+    ).first()
     friend_request.unfriend()
     return redirect('matrimonyApp:friends_list')  # Redirect to your friends list page
 
