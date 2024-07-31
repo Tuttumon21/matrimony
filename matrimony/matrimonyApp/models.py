@@ -148,7 +148,7 @@ class Subscription(models.Model):
         return f'{self.user.username} - {self.plan_id} ({self.plan_type})'
 
 class PaymentDetail(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, related_name='payment_detail', on_delete=models.CASCADE)
     payment_intent = models.CharField(max_length=255, null=True, blank=True)
     session_mode = models.CharField(max_length=255, null=True, blank=True)
     session_id = models.CharField(max_length=255, null=True, blank=True)

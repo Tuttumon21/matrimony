@@ -15,6 +15,42 @@
             </div>
         </div>
         <div class="col-md-9">
+            {% if profile.payment_detail %}
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h5>Subscription Details</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Invoice ID : </strong>{{ profile.payment_detail.invoice_id }}</p>
+                            <p><strong>Mode : </strong> {{ profile.payment_detail.session_mode }}</p>
+                            <p><strong>Payment Type : </strong> {{ profile.payment_detail.payment_method_type }}</p>
+                            <p><strong>Payment Intent ID : </strong> {{ profile.payment_detail.payment_intent }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Subscription ID : </strong> {{ profile.payment_detail.subscription_id }}</p>
+                            <p><strong>Payment Status : </strong> {{ profile.payment_detail.payment_status }}</p>
+                            <p><strong>Plan Status : </strong> {{ profile.payment_detail.status }}</p>
+                            <p><strong>Receipt : </strong> <a href="{{ profile.payment_detail.receipt_url}}">{{ profile.payment_detail.receipt_url}}</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h5>Subscription Details</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Account Type : </strong>FREE</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
             <div class="card mb-3">
                 <div class="card-header">
                     <h5>Profile Details</h5>

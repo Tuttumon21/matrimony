@@ -344,6 +344,7 @@ class MyProfileView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         user = self.request.user
+        # Assuming user has a related_name 'payment_detail'
         context['profile'] = user
         return context
 
