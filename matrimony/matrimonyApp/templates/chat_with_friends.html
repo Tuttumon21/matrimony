@@ -92,10 +92,21 @@
         <h3>Your Friends</h3>
         <!-- <ul> -->
             {% for friend in friends %}
-            <a href="{% url 'matrimonyApp:chat_with_free_friends' room_name=friend.username %}">
-                <img src="{{ friend.profile_pic.url }}" alt="{{ friend.get_full_name }}'s profile image">
-                {{ friend.get_full_name }}
-            </a> 
+                {% if friend.from_user == request.user %}
+                <!-- <li> -->
+                    <a href="{% url 'matrimonyApp:chat_with_friends' room_name=friend.to_user.username %}">
+                        <img src="{{ friend.to_user.profile_pic.url }}" alt="{{ friend.to_user.get_full_name }}'s profile image">
+                        {{ friend.to_user.get_full_name }}
+                    </a>
+                <!-- </li> -->
+                {% else %}
+                <!-- <li> -->
+                    <a href="{% url 'matrimonyApp:chat_with_friends' room_name=friend.from_user.username %}">
+                        <img src="{{ friend.from_user.profile_pic.url }}" alt="{{ friend.from_user.get_full_name }}'s profile image">
+                        {{ friend.from_user.get_full_name }}
+                    </a>
+                <!-- </li> -->
+                {% endif %}
             {% endfor %}
         <!-- </ul> -->
     </div>

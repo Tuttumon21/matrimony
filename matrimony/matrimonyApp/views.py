@@ -231,44 +231,23 @@ def chat_with_friends(request, room_name=None):
     friends = FriendRequest.objects.filter(
         Q(from_user=user, status='accepted') | Q(to_user=user, status='accepted')
     )
-
     
-    # friends_with_last_message = friends.annotate(
-    #     last_message_time=Max('to_user__received_messages__timestamp')
-    # ).order_by('-last_message_time')
-    # Get friends who have sent messages to the user
-    friends_with_last_message = User.objects.filter(
-        id__in=Message.objects.filter(
-            recipient=user
-        ).values_list('sender', flat=True).distinct()
-    ).annotate(
-        last_message_time=Max(
-            Case(
-                When(sent_messages__recipient=user, then=F('sent_messages__timestamp')),
-                output_field=DateTimeField()
-            )
-        )
-    ).order_by('-last_message_time')
-
-    # # Filter friends to include only those who are in the friends_with_last_message list
-    # friends = friends.filter(
-    #     Q(from_user__in=friends_with_last_message) | Q(to_user__in=friends_with_last_message)
-    # )
-    
-
-    
+    friends_with_last_message = friends.annotate(
+        last_message_time=Max('to_user__received_messages__timestamp')
+    ).order_by('-last_message_time')  
+ 
     friend = None
     messages = []
     if room_name:
         friend = get_object_or_404(User, username=room_name)
-        # messages = Message.objects.filter(
-        #     (Q(sender=user) & Q(recipient=friend)) |
-        #     (Q(sender=friend) & Q(recipient=user))
-        # ).order_by('timestamp')
         messages = Message.objects.filter(
-            Q(sender=user, recipient=friend) |
-            Q(sender=friend, recipient=user)
+            (Q(sender=user) & Q(recipient=friend)) |
+            (Q(sender=friend) & Q(recipient=user))
         ).order_by('timestamp')
+        # messages = Message.objects.filter(
+        #     Q(sender=user, recipient=friend) |
+        #     Q(sender=friend, recipient=user)
+        # ).order_by('timestamp')
     
     if request.method == 'POST':
         body = request.POST.get('body')
