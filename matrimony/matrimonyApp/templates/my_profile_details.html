@@ -53,7 +53,28 @@
             {% endif %}
             <div class="card mb-3">
                 <div class="card-header">
-                    <h5>Profile Details</h5>
+                    <h5>Profile</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>First Name :</strong> {{ profile.first_name }}</p>
+                            <p><strong>Location :</strong> {{ profile.parents_details.district }}</p>
+                            <p><strong>Age :</strong> {{ profile.age }}</p>
+                            <p><strong>Active :</strong> {{ profile.is_active }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Last Name :</strong> {{ profile.last_name }}</p>
+                            <p><strong>Username:</strong> {{ profile.username }}</p>
+                            <p><strong>Date of Birth :</strong> {{ profile.date_of_birth }}</p>
+                            <p><strong>Last Seen :</strong> {{ profile.last_login }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h5>Personal Details</h5>
                 </div>
                 <div class="card-body">
                     <div class="row">
@@ -74,21 +95,43 @@
             </div>
             <div class="card mb-3">
                 <div class="card-header">
-                    <h5>Profile</h5>
+                    <h5>Contact Details</h5>
                 </div>
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-6">
-                            <p><strong>First Name :</strong> {{ profile.first_name }}</p>
-                            <p><strong>Location :</strong> {{ profile.parents_details.district }}</p>
-                            <p><strong>Caste :</strong> {{ profile.parents_details.caste }}</p>
-                            <p><strong>Religion :</strong> {{ profile.parents_details.religion }}</p>
+                            <p><strong>contact No : </strong>{{ profile.phone_number }}</p>
+                            <p><strong>Smoking Status : </strong> {{ profile.smoking_status }}</p>
+                            <p><strong>Hobbies : </strong> {{ profile.hobbies }}</p>
                         </div>
                         <div class="col-md-6">
-                            <p><strong>Last Name :</strong> {{ profile.last_name }}</p>
-                            <p><strong>Weight:</strong> {{ profile.parents_details.weight }}</p>
-                            <p><strong>Income:</strong> {{ profile.parents_details.annual_income }}</p>
-                            <p><strong>Education:</strong> {{ profile.education_level }}</p>
+                            <p><strong>Email ID : </strong> {{ profile.email }}</p>
+                            <p><strong>Drinking Status : </strong> {{ profile.drinking_status }}</p>
+                            <p><strong>Interest : </strong> {{ profile.interest }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h5>Career Details</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Employment Status : </strong>{{ profile.employment_status }}</p>
+                            {% if profile.company_name %}
+                            <p><strong>Company Name : </strong> {{ profile.company_name }}</p>
+                            <p><strong>Work Location : </strong> {{ profile.work_location }}</p>
+                            {% else %}
+                            <p><strong>Job Title : </strong>{{ profile.job_title }}</p>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Designation : </strong> {{ profile.designation }}</p>
+                            {% if profile.job_title %}
+                            <p><strong>Expert Level : </strong> {{ profile.expert_level }}</p>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
