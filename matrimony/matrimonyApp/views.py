@@ -234,7 +234,7 @@ def chat_with_friends(request, room_name=None):
     
     friends_with_last_message = friends.annotate(
         last_message_time=Max('to_user__received_messages__timestamp')
-    ).order_by('-last_message_time')  
+    ).order_by('-last_message_time')
  
     friend = None
     messages = []
@@ -244,10 +244,7 @@ def chat_with_friends(request, room_name=None):
             (Q(sender=user) & Q(recipient=friend)) |
             (Q(sender=friend) & Q(recipient=user))
         ).order_by('timestamp')
-        # messages = Message.objects.filter(
-        #     Q(sender=user, recipient=friend) |
-        #     Q(sender=friend, recipient=user)
-        # ).order_by('timestamp')
+        
     
     if request.method == 'POST':
         body = request.POST.get('body')
